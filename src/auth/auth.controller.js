@@ -48,7 +48,28 @@ async function validationUser(req, res, next) {
   next();
 }
 
+async function authorization(req, res, next) {
+  const header = req.get('Authorization');
+  if (!header) {
+  return res.status(HttpCodes.NOT_AUTORIZED).json({"message": "Not autorized"})
+  }
+  
+  const token = header.replace('Bearer ', '');
+  const payload = jwt.verify(token, process.env.JWT_SECRET);
+  const { userID } = payload;
+  const user = await User.findById(userID);
+
+  if (!user) {
+       return res.status(HttpCodes.NOT_AUTORIZED).json({"message": "Not authorized"});
+  }
+  
+  req.user = user;
+  next()
+
+}
+
 module.exports = {
   validationUser,
-  loginUser
+  loginUser,
+  authorization
 }
