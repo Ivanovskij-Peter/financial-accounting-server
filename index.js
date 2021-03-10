@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const Authrouter = require("./src/auth/auth.router");
+const UserRouter = require("./src/user/user.router");
 
 const PORT = process.env.PORT || 8080;
 
@@ -25,7 +27,10 @@ function connectMiddlewares(app) {
   app.use("/images", express.static("public/images/"));
 }
 
-function declarateRouters(app) {}
+function declarateRouters(app) {
+  app.use("/user", UserRouter);
+  app.use("/auth", Authrouter);
+}
 
 async function connectToDb() {
   try {
