@@ -1,4 +1,6 @@
 const fs = require("fs")
+const path = require('path');
+const {unlink} = fs.promises;
 
 const bcrypt = require("bcryptjs");
 const {v4: uuidv4} = require("uuid");
@@ -7,9 +9,10 @@ const minifyImage = require("imagemin");
 const imageminPngquant = require("imagemin-pngquant");
 const cloudinary = require('cloudinary').v2;
 const sgMail = require("@sendgrid/mail");
-const {unlink} = fs.promises;
-const path = require('path');
+const jwt = require('jsonwebtoken');
+const Joi = require('joi');
 
+const { HttpCodes } = require('../helpers/constants');
 const User = require("../User/User");
 
 async function registerUser(req, res) {
@@ -85,7 +88,70 @@ async function sendVerificationEmail(email, verificationToken) {
   .then(res => console.log(res))
 }
 
+async function loginUser(req, res) {
+  const { email, password } = req.body;
+  const user = await User.findOne({
+    email
+  })
+
+  if (!user) {
+    return res.status(HttpCodes.NOT_AUTORIZED).json({"message": "Not autorized"})
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return res.status(HttpCodes.NOT_AUTORIZED).json({"message": "Not autorized"}) 
+  }
+
+  const token = jwt.sign({
+    userID: user._id,
+  }, process.env.JWT_SECRET);
+
+  await User.findOneAndUpdate({ email }, { $set: { token } }, {
+    new: true
+  })
+
+  return res.status(HttpCodes.CREATED).json(user)
+}
+
+async function validationUser(req, res, next) {
+  const validationRules = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    password: Joi.string().required()
+  })
+
+  const validationResult = validationRules.validate(req.body);
+
+  if (validationResult.error) {
+    return res.status(HttpCodes.BAD_REQUEST).json({"message":validationResult.error.details[0].message})
+  }
+  next();
+}
+
+async function authorization(req, res, next) {
+  const header = req.get('Authorization');
+  if (!header) {
+  return res.status(HttpCodes.NOT_AUTORIZED).json({"message": "Not autorized"})
+  }
+  
+  const token = header.replace('Bearer ', '');
+  const payload = jwt.verify(token, process.env.JWT_SECRET);
+  const { userID } = payload;
+  const user = await User.findById(userID);
+
+  if (!user) {
+       return res.status(HttpCodes.NOT_AUTORIZED).json({"message": "Not authorized"});
+  }
+  
+  req.user = user;
+  next()
+
+}
 
 module.exports = {
+  validationUser,
+  loginUser,
+  authorization,
   registerUser,
 }
