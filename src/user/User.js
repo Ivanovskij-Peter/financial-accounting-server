@@ -9,6 +9,10 @@ const userSchema = new Schema({
     unique: true,
     validate: (value) => value.includes("@"),
   },
+  name: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
