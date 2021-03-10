@@ -8,4 +8,4 @@ const asyncWrapper = (middleware) => {
   };
 };
 
-module.exports = asyncWrapper
+module.exports = asyncWrapper;
