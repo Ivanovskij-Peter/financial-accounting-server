@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const { static } = require("express");
 
 const PORT = process.env.PORT || 8080;
 
@@ -22,6 +23,7 @@ function initServer() {
 function connectMiddlewares(app) {
   app.use(express.json());
   app.use(cors());
+  app.use('/images', express.static("public/images/"))
 }
 
 function declarateRouters(app) {
