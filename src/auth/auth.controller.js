@@ -1,5 +1,4 @@
 const fs = require("fs");
-const path = require("path");
 const { unlink } = fs.promises;
 
 const bcrypt = require("bcryptjs");
@@ -11,7 +10,6 @@ const cloudinary = require("cloudinary").v2;
 const sgMail = require("@sendgrid/mail");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
-
 
 const { HttpCodes } = require('../helpers/constants');
 const User = require('../user/User');
@@ -61,22 +59,20 @@ async function registerUser(req, res) {
   });
 
   const [ava] = files;
-  console.log(ava);
 
-  // let avatarURL = '';
+  let avatarURL = '';
+  await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
+      avatarURL = result.secure_url;
+  });
 
-  //           await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
-  //               avatarURL = result.secure_url;
-  //           });
+  await unlink(`tmp/${avatarTitle}.png`);
+  await unlink(ava.destinationPath);
 
-  // await unlink(`tmp/${avatarTitle}.png`);
-  // await unlink(path.join(__dirname, `public/images/${avatarTitle}.png`))
-
-  // console.log(avatarURL);
+  console.log(avatarURL);
 
   const user = await User.create({
     ...body,
-    // avatarURL,
+    avatarURL,
     password: hashedPassword,
     verificationToken: tokenToVerify,
   });
