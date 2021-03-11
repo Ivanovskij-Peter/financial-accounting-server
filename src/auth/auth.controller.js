@@ -14,7 +14,7 @@ const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
 const { HttpCodes } = require('../helpers/constants');
-const User = require("../User/User");
+const User = require("../user/User");
 
 async function registerUser(req, res) {
   const {body} = req

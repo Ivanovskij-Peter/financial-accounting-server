@@ -12,7 +12,6 @@ const {
   registerUser
 } = require('./auth.controller');
 
-const router = Router();
 
 router.post(`/register`, validationUser, asyncWrapper(registerUser));
 router.post('/login',validationUser, asyncWrapper(loginUser));
