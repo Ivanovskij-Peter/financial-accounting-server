@@ -4,15 +4,10 @@ const { getMonthIncomes, getMonthCosts, getMonthInformation } = require("./user.
 const { authorization } = require('../auth/auth.controller');
 const router = Router();
 
-router.get("/user");
-
-// router.patch();
 
 router.get("/incomes", asyncWrapper(getMonthIncomes));
 router.get("/costs", asyncWrapper(getMonthCosts));
 router.get("/information",authorization, asyncWrapper(getMonthInformation));
 
-
-// router.patch();
 
 module.exports = router;
