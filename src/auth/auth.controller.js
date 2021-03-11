@@ -12,9 +12,9 @@ const sgMail = require("@sendgrid/mail");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 
-const { HttpCodes } = require("../helpers/constants");
 
-const User = require("../user/User");
+const { HttpCodes } = require('../helpers/constants');
+const User = require('../user/User');
 
 async function logoutUser(req, res) {
   const { _id } = req.user;
@@ -122,22 +122,14 @@ async function loginUser(req, res) {
       .json({ message: "Not autorized" });
   }
 
-  const token = jwt.sign(
-    {
-      userID: user._id,
-    },
-    process.env.JWT_SECRET,
-  );
+  const token = jwt.sign({
+    userID: user._id,
+  }, process.env.JWT_SECRET);
 
-  await User.findOneAndUpdate(
-    { email },
-    { $set: { token } },
-    {
-      new: true,
-    },
-  );
-
-  return res.status(HttpCodes.CREATED).json(user);
+  const userNew = await User.findOneAndUpdate({ email }, { $set: { token } }, {
+    new: true
+  })
+  return res.status(HttpCodes.CREATED).json(userNew)
 }
 
 async function validationUser(req, res, next) {
