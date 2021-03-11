@@ -24,22 +24,46 @@ const userSchema = new Schema({
     type: Number,
     default: 0,
   },
-
-  operations: {
-    incomes: {
-      date: String,
-      category: String,
-      description: String,
-      amount: String,
+  operations: [
+    {
+      incomes: {
+        date: {
+          type: String,
+          default: " ",
+        },
+        category: {
+          type: String,
+          default: " ",
+        },
+        description: {
+          type: String,
+          default: " ",
+        },
+        amount: {
+          type: String,
+          default: " ",
+        },
+      },
+      costs: {
+        date: {
+          type: String,
+          default: " ",
+        },
+        category: {
+          type: String,
+          default: " ",
+        },
+        description: {
+          type: String,
+          default: " ",
+        },
+        amount: {
+          type: String,
+          default: " ",
+        },
+      },
     },
-    costs: {
-      date: String,
-      category: String,
-      description: String,
-      amount: String,
-    },
-  },
+  ],
 });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+module.exports = mongoose.model("User", userSchema);
