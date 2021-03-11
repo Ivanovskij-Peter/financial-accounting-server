@@ -6,6 +6,32 @@ const Authrouter = require('./src/auth/auth.router');
 const UserRouter = require('./src/user/user.router');
 const sgMail = require('@sendgrid/mail');
 
+
+
+
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'Kapusta API',
+      version: '1.0.0',
+      description:
+        "Kapusta  API his is a budget planning API application made with Express and documented with Swagger",
+    },
+    
+  },
+  apis: [
+      'index.js',
+      'src/user/user.router.js',
+      'src/auth/auth.router.js',
+    ],
+}
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+console.log(swaggerDocs);
+
+
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
@@ -26,6 +52,7 @@ function connectMiddlewares(app) {
   app.use(express.json());
   app.use(cors());
   app.use('/images', express.static('public/images/'));
+  app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs)); 
 }
 
 function declarateRouters(app) {

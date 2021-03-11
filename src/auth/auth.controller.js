@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
 const { HttpCodes } = require('../helpers/constants');
-const User = require('../User/User');
+const User = require('../user/User');
 
 async function logoutUser(req, res) {
   const { _id } = req.user;
