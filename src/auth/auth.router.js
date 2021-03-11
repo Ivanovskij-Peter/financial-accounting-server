@@ -1,16 +1,18 @@
 const { Router } = require('express');
-const asyncWrapper = require('../helpers/asyncWrapper');
-const AuthController = require('../auth/auth.controller');
+
 const router = Router();
 
-router.post();
-router.post();
-router.post(
-  '/logout',
-  AuthController.authorization,
-  asyncWrapper(AuthController.logoutUser),
-);
-router.get();
-router.delete();
+const asyncWrapper = require('../helpers/asyncWrapper');
+const {
+  validationUser,
+  loginUser,
+  authorization,
+  registerUser,
+  logoutUser,
+} = require('./auth.controller');
+
+router.post(`/register`, validationUser, asyncWrapper(registerUser));
+router.post('/login', validationUser, asyncWrapper(loginUser));
+router.post('/logout', authorization, asyncWrapper(logoutUser));
 
 module.exports = router;

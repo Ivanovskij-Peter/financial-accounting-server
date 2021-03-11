@@ -4,11 +4,12 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const Authrouter = require('./src/auth/auth.router');
 const UserRouter = require('./src/user/user.router');
-
-const PORT = process.env.PORT || 8080;
+const sgMail = require('@sendgrid/mail');
 
 dotenv.config();
 
+const PORT = process.env.PORT || 8080;
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 start();
 
 function start() {
@@ -46,6 +47,6 @@ async function connectToDb() {
 }
 function listen(app) {
   app.listen(PORT, () => {
-    console.log('Server is lisening on port', PORT);
+    console.log('Server is listening on port', PORT);
   });
 }
