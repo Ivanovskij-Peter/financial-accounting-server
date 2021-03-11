@@ -1,4 +1,4 @@
-exports.asyncWrapper = (middleware) => {
+const asyncWrapper = (middleware) => {
   return async (req, res, next) => {
     try {
       await middleware(req, res, next);
@@ -7,3 +7,5 @@ exports.asyncWrapper = (middleware) => {
     }
   };
 };
+
+module.exports = asyncWrapper;
