@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const asyncWrapper = require("../helpers/asyncWrapper");
-const { getMonthIncomes, getMonthCosts } = require("./user.controller");
+const { getMonthIncomes, getMonthCosts, getMonthInformation } = require("./user.controller");
 const router = Router();
 
 router.get("/user");
@@ -9,6 +9,7 @@ router.get("/user");
 
 router.get("/incomes", asyncWrapper(getMonthIncomes));
 router.get("/costs", asyncWrapper(getMonthCosts));
+router.get("/information", asyncWrapper(getMonthInformation));
 
 
 // router.patch();

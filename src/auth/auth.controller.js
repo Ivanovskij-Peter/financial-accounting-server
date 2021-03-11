@@ -70,7 +70,7 @@ async function registerUser(req, res) {
     return res.status(500).send({message: 'Something went wrong'})
   }
 
-  await sendVerificationEmail(body.email, tokenToVerify)
+  //await sendVerificationEmail(body.email, tokenToVerify)
 
   res.status(201).json({
     user
@@ -108,11 +108,10 @@ async function loginUser(req, res) {
     userID: user._id,
   }, process.env.JWT_SECRET);
 
-  await User.findOneAndUpdate({ email }, { $set: { token } }, {
+  const userNew = await User.findOneAndUpdate({ email }, { $set: { token } }, {
     new: true
   })
-
-  return res.status(HttpCodes.CREATED).json(user)
+  return res.status(HttpCodes.CREATED).json(userNew)
 }
 
 async function validationUser(req, res, next) {
