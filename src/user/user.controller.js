@@ -1,5 +1,89 @@
-const User = require('./User');
 
+const User = require("./User");
+
+exports.getMonthIncomes = async (req, res, next) => {
+  const user = req.user;
+
+  const monthesArr = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+
+  function getMonthFromString(str) {
+    return new Date(str).getMonth();
+  }
+
+  user.operations.incomes
+    .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
+    .map((item) => ({
+      date: monthesArr[+item.date.slice(0, 2) - 1],
+      amount: item.amount,
+    }))
+    .reduce((acc, curr) => {
+      if (!acc.some((el) => el.date === curr.date)) {
+        acc.push(curr);
+      } else {
+        const neededArr = acc.find((el) => el.date === curr.date);
+        neededArr.amount += curr.amount;
+      }
+      return acc;
+    }, []);
+
+  return res
+    .status(200)
+    .send({ user: { operations: user.operations.incomes } });
+};
+
+exports.getMonthCosts = async (req, res, next) => {
+  const user = req.user;
+
+  const monthesArr = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+
+  function getMonthFromString(str) {
+    return new Date(str).getMonth();
+  }
+
+  user.operations.costs
+    .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
+    .map((item) => ({
+      date: monthesArr[+item.date.slice(0, 2) - 1],
+      amount: item.amount,
+    }))
+    .reduce((acc, curr) => {
+      if (!acc.some((el) => el.date === curr.date)) {
+        acc.push(curr);
+      } else {
+        const neededArr = acc.find((el) => el.date === curr.date);
+        neededArr.amount += curr.amount;
+      }
+      return acc;
+    }, []);
+
+  return res.status(200).send({ user: { operations: user.operations.costs } });
+};
 async function userIncome(req, res) {
     const {user} = req;
     const {body: income} = req;
@@ -49,14 +133,4 @@ async function userCosts(req, res) {
 module.exports = {
     userIncome,
     userCosts
-};
-const User = require("./User");
-
-exports.getMonthIncomes = async (req, res, next) => {
-  await User.findOne(req.user._id);
-  return res.status(200).send({ user: { operations: user.incomes } });
-};
-exports.getMonthCosts = async (req, res, next) => {
-  await User.findOne(req.user._id);
-  return res.status(200).send({ user: { operations: user.costs } });
 };
