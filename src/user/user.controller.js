@@ -1,7 +1,7 @@
 const { HttpCodes } = require("../helpers/constants");
 const User = require("./User");
 
-exports.getMonthIncomes = async (req, res, next) => {
+async function getMonthIncomes(req, res, next) {
   const user = req.user;
 
   const monthesArr = [
@@ -22,8 +22,8 @@ exports.getMonthIncomes = async (req, res, next) => {
   function getMonthFromString(str) {
     return new Date(str).getMonth();
   }
-
-  user.operations.incomes
+  const incomesArr = user.operations.costs;
+  const formatedIncomes = incomesArr
     .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
     .map((item) => ({
       date: monthesArr[+item.date.slice(0, 2) - 1],
@@ -41,10 +41,10 @@ exports.getMonthIncomes = async (req, res, next) => {
 
   return res
     .status(200)
-    .send({ user: { operations: user.operations.incomes } });
-};
+    .send({ user: { operations: { costs: formatedIncomes } } });
+}
 
-exports.getMonthInformation = async (req, res) => {
+async function getMonthInformation(req, res) {
   const { date } = req.body;
   const user = await User.findOne(req.user._id);
 
@@ -88,8 +88,8 @@ exports.getMonthInformation = async (req, res) => {
   console.log(costs);
 
   res.status(HttpCodes.OK).json(user);
-};
-exports.getMonthCosts = async (req, res, next) => {
+}
+async function getMonthCosts(req, res, next) {
   const user = req.user;
 
   const monthesArr = [
@@ -110,8 +110,8 @@ exports.getMonthCosts = async (req, res, next) => {
   function getMonthFromString(str) {
     return new Date(str).getMonth();
   }
-
-  user.operations.costs
+  const costsArr = user.operations.costs;
+  const formatedCost = costsArr
     .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
     .map((item) => ({
       date: monthesArr[+item.date.slice(0, 2) - 1],
@@ -127,8 +127,10 @@ exports.getMonthCosts = async (req, res, next) => {
       return acc;
     }, []);
 
-  return res.status(200).send({ user: { operations: user.operations.costs } });
-};
+  return res
+    .status(200)
+    .send({ user: { operations: { costs: formatedCost } } });
+}
 
 async function userIncome(req, res) {
   const { user } = req;
@@ -185,4 +187,7 @@ async function userCosts(req, res) {
 module.exports = {
   userIncome,
   userCosts,
+  getMonthCosts,
+  getMonthIncomes,
+  getMonthInformation,
 };
