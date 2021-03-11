@@ -1,21 +1,18 @@
 const { Router } = require("express");
 
-
 const router = Router();
 
-
-const asyncWrapper = require('../helpers/asyncWrapper');
-const {  
-  validationUser, 
+const asyncWrapper = require("../helpers/asyncWrapper");
+const {
+  validationUser,
   loginUser,
-  authorization, 
-  registerUser
-} = require('./auth.controller');
+  authorization,
+  registerUser,
+  logoutUser,
+} = require("./auth.controller");
 
-const router = Router();
-
-router.post(`/register`, validationUser, asyncWrapper(registerUser));
-router.post('/login',validationUser, asyncWrapper(loginUser));
-
+router.post("/register", validationUser, asyncWrapper(registerUser));
+router.post("/login", validationUser, asyncWrapper(loginUser));
+router.post("/logout", authorization, asyncWrapper(logoutUser));
 
 module.exports = router;
