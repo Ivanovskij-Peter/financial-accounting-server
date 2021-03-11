@@ -17,6 +17,10 @@ async function userIncome(req, res) {
     user.incomes = incomes;
     const updatedUser = await User.findByIdAndUpdate(user._id, user, {new: true});
 
+    return res.send({
+        categoryTotal: total
+    }).status(201)
+
 };
 
 async function userCosts(req, res) {
@@ -28,11 +32,17 @@ async function userCosts(req, res) {
     costs = [...costs, cost];
 
     const costs = costs.forEach(el => {
-        total += el.amount;
+        if(el.category === cost.category) {
+            total += el.amount;
+        }
     });
 
     user.costs = costs;
     const updatedUser = await User.findByIdAndUpdate(user._id, user, {new: true});
+
+    return res.send({
+        categoryTotal: total
+    }).status(201)
 
 };
 
