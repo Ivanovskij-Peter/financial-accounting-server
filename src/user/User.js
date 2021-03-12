@@ -27,6 +27,7 @@ const UserSchema = new Schema({
   operations: {
     incomes: [
       {
+        id: String,
         date: String,
         category: String,
         description: String,
@@ -35,6 +36,7 @@ const UserSchema = new Schema({
     ],
     costs: [
       {
+        id: String,
         date: String,
         category: String,
         description: String,
