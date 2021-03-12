@@ -1,15 +1,15 @@
-const { Router } = require('express');
+const { Router } = require("express");
 
 const router = Router();
 
-const asyncWrapper = require('../helpers/asyncWrapper');
+const asyncWrapper = require("../helpers/asyncWrapper");
 const {
   validationUser,
   loginUser,
   authorization,
   registerUser,
   logoutUser,
-} = require('./auth.controller');
+} = require("./auth.controller");
 
 /**
  * @swagger
@@ -24,7 +24,6 @@ const {
  *         description: Server error
  */
 
-router.post(`/register`, validationUser, asyncWrapper(registerUser));
 
 /**
  * @swagger
@@ -39,7 +38,6 @@ router.post(`/register`, validationUser, asyncWrapper(registerUser));
  *         description: Server error
  */
 
-router.post('/login', validationUser, asyncWrapper(loginUser));
 /**
  * @swagger
  * /logout:
@@ -54,6 +52,8 @@ router.post('/login', validationUser, asyncWrapper(loginUser));
  */
 
 
-router.post('/logout', authorization, asyncWrapper(logoutUser));
+router.post("/register", validationUser, asyncWrapper(registerUser));
+router.post("/login", validationUser, asyncWrapper(loginUser));
+router.post("/logout", authorization, asyncWrapper(logoutUser));
 
 module.exports = router;
