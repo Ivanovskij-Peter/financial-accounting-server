@@ -10,11 +10,12 @@ const router = Router();
  * @swagger
  * /user:
  *   get:
- *     description: Get user
- *     tags: [User]
+ *     tags:
+ *     - "user"
+ *     summary: returns user
  *     responses: 
  *       200: 
- *         description: Success
+ *         description: Successful operation
  *       500:
  *         description: Server error
  */
@@ -26,7 +27,7 @@ router.get("/user");
  * /incomes:
  *   get:
  *     description: Get user's incomes
- *     tags: [Incomes]
+ *     tags: [Transactions]
  *     responses: 
  *       200: 
  *         description: Success
@@ -42,7 +43,7 @@ router.get("/incomes", asyncWrapper(getMonthIncomes));
  * /costs:
  *   get:
  *     description: Get user's costs and expences
- *     tags: [Costs]
+ *     tags: [Transactions]
  *     responses: 
  *       200: 
  *         description: Success

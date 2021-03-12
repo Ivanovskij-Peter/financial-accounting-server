@@ -30,7 +30,7 @@ router.post(`/register`, validationUser, asyncWrapper(registerUser));
  * @swagger
  * /login:
  *   post:
- *     description: Registration of new user
+ *     description: Log in
  *     tags: [User]
  *     responses: 
  *       200: 
@@ -44,7 +44,7 @@ router.post('/login', validationUser, asyncWrapper(loginUser));
  * @swagger
  * /logout:
  *   post:
- *     description: Registration of new user
+ *     description: Log Out
  *     tags: [User]
  *     responses: 
  *       200: 
