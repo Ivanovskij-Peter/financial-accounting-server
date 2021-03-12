@@ -5,10 +5,18 @@ const mongoose = require('mongoose');
 const Authrouter = require('./src/auth/auth.router');
 const UserRouter = require('./src/user/user.router');
 const sgMail = require('@sendgrid/mail');
+const cloudinary = require('cloudinary').v2;
 
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 start();
 

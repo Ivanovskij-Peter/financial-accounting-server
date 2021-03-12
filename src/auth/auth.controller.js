@@ -1,5 +1,4 @@
 const fs = require("fs");
-const path = require("path");
 const { unlink } = fs.promises;
 
 const bcrypt = require("bcryptjs");
@@ -12,9 +11,8 @@ const sgMail = require("@sendgrid/mail");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 
-
 const { HttpCodes } = require('../helpers/constants');
-const User = require('../user/User');
+const User = require('../user/User'); 
 
 async function logoutUser(req, res) {
   const { _id } = req.user;
@@ -61,34 +59,36 @@ async function registerUser(req, res) {
   });
 
   const [ava] = files;
-  console.log(ava);
 
-  // let avatarURL = '';
+  let avatarURL = '';
+  await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
+      avatarURL = result.secure_url;
+  });
 
-  //           await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
-  //               avatarURL = result.secure_url;
-  //           });
+  await unlink(`tmp/${avatarTitle}.png`);
+  await unlink(ava.destinationPath);
 
-  // await unlink(`tmp/${avatarTitle}.png`);
-  // await unlink(path.join(__dirname, `public/images/${avatarTitle}.png`))
-
-  // console.log(avatarURL);
+  console.log(avatarURL);
 
   const user = await User.create({
     ...body,
-    // avatarURL,
+    avatarURL,
     password: hashedPassword,
     verificationToken: tokenToVerify,
   });
-
+  
   if (!user) {
     return res.status(500).send({ message: "Something went wrong" });
   }
 
   // await sendVerificationEmail(body.email, tokenToVerify);
-
+  const registrationResp = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+  }
   res.status(201).json({
-    user,
+    registrationResp,
   });
 }
 
