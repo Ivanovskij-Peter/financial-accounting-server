@@ -52,7 +52,7 @@ async function getMonthInformation(req, res) {
   const month = date.split("-")[1];
 
   const yearCostsArr = user.operations.costs.filter(
-    (el) => year === el.date.split("-")[0],
+    (el) => year === el.date.split("-")[2],
   );
 
   const monthCostsArr = yearCostsArr.filter(
@@ -85,9 +85,76 @@ async function getMonthInformation(req, res) {
       };
   });
 
-  console.log(costs);
+  for (let cost in costs) {
+    if (cost !== "total") {
+      const costObj = costs[cost];
+      if (!costObj.total) {
+        costObj.total = 0;
+      }
+      for (let descr in costObj) {
+        const price = costObj[descr]
 
-  res.status(HttpCodes.OK).json(user);
+        if (descr !== 'total') {
+          costObj.total = costObj.total + price
+        }
+      }
+    }
+  }
+
+  const yearIncomesArr = user.operations.incomes.filter(
+    (el) => year === el.date.split("-")[2],
+  );
+
+  const monthIncomesArr = yearIncomesArr.filter(
+    (el) => month === el.date.split("-")[1],
+  );
+
+  const totalIncomes = monthIncomesArr.reduce(
+    (acc, el) => acc + Number(el.amount),
+    0,
+  );
+
+  const incomes = {
+    total: totalIncomes,
+  };
+
+  monthIncomesArr.forEach((el) => {
+    if (incomes[el.category]) {
+      if (incomes[el.category][el.description]) {
+        const price = +incomes[el.category][el.description] + +el.amount;
+        incomes[el.category][el.description] = price;
+      } else
+        incomes[el.category] = {
+          ...incomes[el.category],
+          [el.description]: el.amount,
+        };
+    } else
+      incomes[el.category] = {
+        ...incomes[el.category],
+        [el.description]: el.amount,
+      };
+  });
+
+  for (let income in incomes) {
+    if (income !== "total") {
+      const incomeObj = incomes[income];
+      if (!incomeObj.total) {
+        incomeObj.total = 0;
+      }
+      for (let descr in incomeObj) {
+        const price = incomeObj[descr]
+
+        if (descr !== 'total') {
+          incomeObj.total = incomeObj.total + price
+        }
+      }
+    }
+  }
+  
+  res.status(HttpCodes.OK).json({
+    costs: costs,
+    incomes: incomes
+  });
 }
 async function getMonthCosts(req, res, next) {
   const user = req.user;
