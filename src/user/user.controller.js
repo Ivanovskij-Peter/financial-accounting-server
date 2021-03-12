@@ -205,7 +205,7 @@ async function userIncome(req, res) {
   let incomes = [...user.operations.incomes];
   let total = 0;
 
-  incomes = [...incomes, body]
+  incomes = [...incomes, body];
 
   incomes.map((el) => {
     if (el.category === body.category) {
@@ -230,13 +230,47 @@ async function userIncome(req, res) {
     .status(201);
 }
 
+async function deleteIncome(req, res) {
+  const { user } = req;
+  const { body } = req;
+  let incomes = [...user.operations.incomes];
+
+  incomes = incomes.filter(el => el.id !== body.id);
+
+  user.operations.incomes = [...incomes];
+
+  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
+    new: true,
+  });
+
+  return res.send("It's OK").status(200);
+
+}
+
+async function deleteCosts(req, res) {
+  const { user } = req;
+  const { body } = req;
+  let costs = [...user.operations.costs];
+
+  costs = costs.filter(el => el.id !== body.id);
+
+  user.operations.costs = [...costs];
+
+  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
+    new: true,
+  });
+
+  return res.send("It's OK").status(200);
+
+}
+
 async function userCosts(req, res) {
   const { user } = req;
   const { body } = req;
   let costs = [...user.operations.costs];
   let total = 0;
 
-  costs = [...costs, body]
+  costs = [...costs, body];
 
   costs.map((el) => {
     if (el.category === body.category) {
@@ -262,6 +296,8 @@ async function userCosts(req, res) {
 }
 
 module.exports = {
+  deleteIncome,
+  deleteCosts,
   userIncome,
   userCosts,
   getMonthCosts,
