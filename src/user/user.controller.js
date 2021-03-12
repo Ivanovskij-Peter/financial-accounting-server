@@ -52,7 +52,7 @@ async function getMonthInformation(req, res) {
   const month = date.split("-")[1];
 
   const yearCostsArr = user.operations.costs.filter(
-    (el) => year === el.date.split("-")[0],
+    (el) => year === el.date.split("-")[2],
   );
 
   const monthCostsArr = yearCostsArr.filter(
@@ -85,9 +85,25 @@ async function getMonthInformation(req, res) {
       };
   });
 
+  for (let cost in costs) {
+    if (cost !== "total") {
+      const costObj = costs[cost];
+      if (!costObj.total) {
+        costObj.total = 0;
+      }
+      for (let descr in costObj) {
+        const price = costObj[descr]
+
+        if (descr !== 'total') {
+          costObj.total = costObj.total + price
+        }
+      }
+    }
+  }
+
   console.log(costs);
 
-  res.status(HttpCodes.OK).json(user);
+  res.status(HttpCodes.OK).json(costs);
 }
 async function getMonthCosts(req, res, next) {
   const user = req.user;
