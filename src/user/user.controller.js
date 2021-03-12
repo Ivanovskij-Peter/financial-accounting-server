@@ -134,19 +134,26 @@ async function getMonthCosts(req, res, next) {
 
 async function userIncome(req, res) {
   const { user } = req;
-  const { body: income } = req;
-  // const incomes = [...user.operation.incomes];
-  const total = 0;
+  const { body } = req;
+  let incomes = [...user.operations.incomes];
+  let total = 0;
 
-  const incomes = incomes.forEach((el) => {
-    if (el.category === income.category) {
-      total += el.amount;
+  incomes = [...incomes, body]
+
+  incomes.map((el) => {
+    if (el.category === body.category) {
+      total += +el.amount;
     }
   });
 
-  incomes = [...incomes, income];
+  if(incomes.length > 1) {
+    incomes = incomes.filter(el => el.category === body.category)
+  }
 
-  user.incomes = incomes;
+  user.operations.incomes = [...incomes];
+
+  console.log(user)
+
   const updatedUser = await User.findByIdAndUpdate(user._id, user, {
     new: true,
   });
@@ -160,19 +167,26 @@ async function userIncome(req, res) {
 
 async function userCosts(req, res) {
   const { user } = req;
-  const { body: cost } = req;
-  // const costs = [...user.operation.costs];
-  const total = 0;
+  const { body } = req;
+  let costs = [...user.operations.costs];
+  let total = 0;
 
-  costs = [...costs, cost];
+  costs = [...costs, body]
 
-  const costs = costs.forEach((el) => {
-    if (el.category === cost.category) {
-      total += el.amount;
+  costs.map((el) => {
+    if (el.category === body.category) {
+      total += +el.amount;
     }
   });
 
-  user.costs = costs;
+  if(costs.length > 1) {
+    costs = costs.filter(el => el.category === body.category)
+  }
+
+  user.operations.costs = [...costs];
+
+  console.log(user)
+
   const updatedUser = await User.findByIdAndUpdate(user._id, user, {
     new: true,
   });

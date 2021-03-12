@@ -61,14 +61,14 @@ async function registerUser(req, res) {
   const [ava] = files;
 
   let avatarURL = '';
-  await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
-      avatarURL = result.secure_url;
-  });
+  // await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
+  //     avatarURL = result.secure_url;
+  // });
 
-  await unlink(`tmp/${avatarTitle}.png`);
-  await unlink(ava.destinationPath);
+  // await unlink(`tmp/${avatarTitle}.png`);
+  // await unlink(ava.destinationPath);
 
-  console.log(avatarURL);
+  // console.log(avatarURL);
 
   const user = await User.create({
     ...body,
