@@ -152,8 +152,6 @@ async function userIncome(req, res) {
 
   user.operations.incomes = [...incomes];
 
-  console.log(user)
-
   const updatedUser = await User.findByIdAndUpdate(user._id, user, {
     new: true,
   });
@@ -184,8 +182,6 @@ async function userCosts(req, res) {
   }
 
   user.operations.costs = [...costs];
-
-  console.log(user)
 
   const updatedUser = await User.findByIdAndUpdate(user._id, user, {
     new: true,
