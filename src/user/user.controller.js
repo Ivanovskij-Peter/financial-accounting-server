@@ -101,8 +101,59 @@ async function getMonthInformation(req, res) {
     }
   }
 
-  console.log(costs);
+  console.log('costs', costs);
 
+  const yearIncomesArr = user.operations.incomes.filter(
+    (el) => year === el.date.split("-")[2],
+  );
+
+  const monthIncomesArr = yearIncomesArr.filter(
+    (el) => month === el.date.split("-")[1],
+  );
+
+  const totalIncomes = monthIncomesArr.reduce(
+    (acc, el) => acc + Number(el.amount),
+    0,
+  );
+
+  const incomes = {
+    total: totalIncomes,
+  };
+
+  monthIncomesArr.forEach((el) => {
+    if (incomes[el.category]) {
+      if (incomes[el.category][el.description]) {
+        const price = +incomes[el.category][el.description] + +el.amount;
+        incomes[el.category][el.description] = price;
+      } else
+        incomes[el.category] = {
+          ...incomes[el.category],
+          [el.description]: el.amount,
+        };
+    } else
+      incomes[el.category] = {
+        ...incomes[el.category],
+        [el.description]: el.amount,
+      };
+  });
+
+  for (let income in incomes) {
+    if (income !== "total") {
+      const incomeObj = incomes[income];
+      if (!incomeObj.total) {
+        incomeObj.total = 0;
+      }
+      for (let descr in incomeObj) {
+        const price = incomeObj[descr]
+
+        if (descr !== 'total') {
+          incomeObj.total = incomeObj.total + price
+        }
+      }
+    }
+  }
+  console.log('incomes', incomes);
+  
   res.status(HttpCodes.OK).json(costs);
 }
 async function getMonthCosts(req, res, next) {
