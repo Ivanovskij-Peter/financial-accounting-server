@@ -12,7 +12,7 @@ const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 
 const { HttpCodes } = require('../helpers/constants');
-const User = require('../user/User');
+const User = require('../user/User'); 
 
 async function logoutUser(req, res) {
   const { _id } = req.user;
@@ -76,15 +76,19 @@ async function registerUser(req, res) {
     password: hashedPassword,
     verificationToken: tokenToVerify,
   });
-
+  
   if (!user) {
     return res.status(500).send({ message: "Something went wrong" });
   }
 
   // await sendVerificationEmail(body.email, tokenToVerify);
-
+  const registrationResp = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+  }
   res.status(201).json({
-    user,
+    registrationResp,
   });
 }
 
