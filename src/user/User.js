@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -24,22 +24,24 @@ const userSchema = new Schema({
     type: Number,
     default: 0,
   },
-
   operations: {
-    incomes: {
-      date: String,
-      category: String,
-      description: String,
-      amount: String,
-    },
-    costs: {
-      date: String,
-      category: String,
-      description: String,
-      amount: String,
-    },
+    incomes: [
+      {
+        date: String,
+        category: String,
+        description: String,
+        amount: Number,
+      },
+    ],
+    costs: [
+      {
+        date: String,
+        category: String,
+        description: String,
+        amount: Number,
+      },
+    ],
   },
 });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);

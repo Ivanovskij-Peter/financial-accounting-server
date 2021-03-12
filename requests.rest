@@ -1,0 +1,27 @@
+POST http://localhost:3001/auth/register
+Content-Type: application/json
+
+{
+    "name": "xoms",
+    "email": "xomstest1@test.mail",
+    "password": "password"
+}
+
+###
+
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+    "email": "xomstest@test.mail",
+    "password": "password"
+}
+
+### 
+
+POST http://localhost:3000/auth/refreshToken
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwM2JiZTQyZGFkNWVjMDJkMDY5YzU5ZiIsImlhdCI6MTYxNDUzNzYwM30.tbb-fx8-rw6Bo6Old5vxm4Njgr-oz7qL9BO1lHfefA8" 
+}
