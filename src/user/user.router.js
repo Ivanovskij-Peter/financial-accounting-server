@@ -2,7 +2,7 @@ const { Router } = require("express");
 
 /**
  * @swagger
- * /incomes:
+ * /user/incomes:
  *   get:
  *     description: Get user's incomes
  *     tags: [Transactions]
@@ -11,11 +11,8 @@ const { Router } = require("express");
  *         description: Success
  *       500:
  *         description: Server error
- */
-
-/**
- * @swagger
- * /costs:
+ 
+ * /user/costs:
  *   get:
  *     description: Get user's costs and expences
  *     tags: [Transactions]
@@ -24,11 +21,8 @@ const { Router } = require("express");
  *         description: Success
  *       500:
  *         description: Server error
- */
-
- /**
- * @swagger
- * /information:
+ 
+ * /user/information:
  *   get:
  *     description: Get information
  *     tags: [Transactions]
@@ -37,11 +31,8 @@ const { Router } = require("express");
  *         description: Success
  *       500:
  *         description: Server error
- */
-
-  /**
- * @swagger
- * /incomes:
+ * 
+ * /user/incomes:
  *   patch:
  *     description: Add user's incomes
  *     tags: [Transactions]
@@ -54,7 +45,7 @@ const { Router } = require("express");
 
   /**
  * @swagger
- * /costs:
+ * /user/costs:
  *   patch:
  *     description: Add user's expenses
  *     tags: [Transactions]
@@ -63,11 +54,8 @@ const { Router } = require("express");
  *         description: Success
  *       500:
  *         description: Server error
- */
 
-  /**
- * @swagger
- * /incomes:
+ * /user/incomes:
  *   delete:
  *     description: Delete user's incomes
  *     tags: [Transactions]
@@ -76,11 +64,8 @@ const { Router } = require("express");
  *         description: Success
  *       500:
  *         description: Server error
- */
-
-  /**
- * @swagger
- * /costs:
+ *
+ * /user/costs:
  *   delete:
  *     description: Delete user's expenses
  *     tags: [Transactions]

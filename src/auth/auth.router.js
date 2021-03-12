@@ -13,21 +13,28 @@ const {
 
 /**
  * @swagger
- * /register:
+ * /auth/register:
  *   post:
  *     description: Registration of new user
  *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The user's name.
+ *                 example: Leanne Graham 
  *     responses: 
  *       200: 
- *         description: Success
+ *         description: Successful registration       
  *       500:
  *         description: Server error
- */
 
-
-/**
- * @swagger
- * /login:
+ * /auth/login:
  *   post:
  *     description: Log in
  *     tags: [User]
@@ -36,11 +43,8 @@ const {
  *         description: Success
  *       500:
  *         description: Server error
- */
 
-/**
- * @swagger
- * /logout:
+ * /auth/logout:
  *   post:
  *     description: Log Out
  *     tags: [User]
