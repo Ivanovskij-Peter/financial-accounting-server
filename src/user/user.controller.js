@@ -101,8 +101,6 @@ async function getMonthInformation(req, res) {
     }
   }
 
-  console.log('costs', costs);
-
   const yearIncomesArr = user.operations.incomes.filter(
     (el) => year === el.date.split("-")[2],
   );
@@ -152,9 +150,11 @@ async function getMonthInformation(req, res) {
       }
     }
   }
-  console.log('incomes', incomes);
   
-  res.status(HttpCodes.OK).json(costs);
+  res.status(HttpCodes.OK).json({
+    costs: costs,
+    incomes: incomes
+  });
 }
 async function getMonthCosts(req, res, next) {
   const user = req.user;
