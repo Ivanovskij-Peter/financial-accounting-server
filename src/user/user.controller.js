@@ -22,7 +22,7 @@ async function getMonthIncomes(req, res, next) {
   function getMonthFromString(str) {
     return new Date(str).getMonth();
   }
-  const incomesArr = user.operations.costs;
+  const incomesArr = user.operations.incomes;
   const formatedIncomes = incomesArr
     .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
     .map((item) => ({
@@ -41,7 +41,7 @@ async function getMonthIncomes(req, res, next) {
 
   return res
     .status(200)
-    .send({ user: { operations: { costs: formatedIncomes } } });
+    .send({ user: { operations: { incomes: formatedIncomes } } });
 }
 
 async function getMonthInformation(req, res) {
