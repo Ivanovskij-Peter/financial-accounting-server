@@ -31,8 +31,8 @@
           "200": {
             "description": "get incomes",
             "content": {
-              "application/json; charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/200" },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Incomes" },
                 "example": {
                   "user": {
                     "operations": {
@@ -59,7 +59,7 @@
           "200": {
             "description": "patch incomes",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": { "$ref": "#/components/schemas/200" },
                 "example": { "categoryTotal": 9 }
               }
@@ -97,7 +97,7 @@
         "responses": {
           "200": {
             "description": "delete incomes",
-            "content": { "text/html; charset=utf-8": { "schema": {} } }
+            "content": { "text/html": { "schema": {} } }
           }
         },
         "requestBody": {
@@ -130,8 +130,8 @@
           "200": {
             "description": "get costs",
             "content": {
-              "application/json; charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/200" },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Costs" },
                 "example": {
                   "user": {
                     "operations": {
@@ -158,7 +158,7 @@
           "200": {
             "description": "patch costs",
             "content": {
-              "application/json; charset=utf-8": {
+              "application/json": {
                 "schema": { "$ref": "#/components/schemas/200" },
                 "example": { "categoryTotal": 30 }
               }
@@ -196,7 +196,7 @@
         "responses": {
           "200": {
             "description": "delete costs",
-            "content": { "text/html; charset=utf-8": { "schema": {} } }
+            "content": { "text/html": { "schema": {} } }
           }
         },
         "requestBody": {
@@ -240,8 +240,8 @@
           "200": {
             "description": "get information",
             "content": {
-              "application/json; charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/200" },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Information" },
                 "example": {
                   "costs": {
                     "total": 30,
@@ -274,8 +274,8 @@
           "201": {
             "description": "register user",
             "content": {
-              "application/json; charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/201" },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Login" },
                 "example": {
                   "id": "604fac1d57822d2444d93cc2",
                   "email": "test22@gmail.com",
@@ -313,8 +313,7 @@
           "201": {
             "description": "login user",
             "content": {
-              "application/json; charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/201" },
+              "application/json": {
                 "example": {
                   "operations": { "incomes": [], "costs": [] },
                   "balance": 0,
@@ -364,7 +363,7 @@
   },
   "components": {
     "schemas": {
-      "200": {
+      "Incomes": {
         "type": "object",
         "properties": {
           "user": {
@@ -397,7 +396,101 @@
           }
         }
       },
-      "201": {
+      "Costs": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "operations": {
+                "type": "object",
+                "properties": {
+                  "costs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "description": "",
+                          "default": "Март"
+                        },
+                        "amount": {
+                          "type": "integer",
+                          "description": "",
+                          "default": 15
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Information": {
+        "type": "object",
+        "properties": {
+          "costs": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "string",
+                "description": "",
+                "default": ""
+              },
+              "category": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "string",
+                      "description": "",
+                      "default": ""
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "",
+                      "default": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "incomes": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "string",
+                "description": "",
+                "default": ""
+              },
+              "category": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "string",
+                      "description": "",
+                      "default": ""
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "",
+                      "default": ""
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Login": {
         "type": "object",
         "properties": {
           "id": {
