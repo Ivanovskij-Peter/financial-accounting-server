@@ -15,7 +15,11 @@ const router = Router();
 
 router.get("/incomes", authorization, asyncWrapper(getMonthIncomes));
 router.get("/costs", authorization, asyncWrapper(getMonthCosts));
-router.get("/information", authorization, asyncWrapper(getMonthInformation));
+router.get(
+  "/information/:date",
+  authorization,
+  asyncWrapper(getMonthInformation),
+);
 router.patch("/incomes", authorization, asyncWrapper(userIncome));
 router.patch("/costs", authorization, asyncWrapper(userCosts));
 router.delete("/incomes", authorization, asyncWrapper(deleteIncome));
