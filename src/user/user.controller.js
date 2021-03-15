@@ -45,18 +45,19 @@ async function getMonthIncomes(req, res, next) {
 }
 
 async function getMonthInformation(req, res) {
-  const { date } = req.body;
+  // form of date MM-DD-YYYY
+  const { date } = req.params;
   const user = await User.findOne(req.user._id);
 
-  const year = date.split("-")[0];
-  const month = date.split("-")[1];
+  const year = date.split("-")[2];
+  const month = date.split("-")[0];
 
   const yearCostsArr = user.operations.costs.filter(
     (el) => year === el.date.split("-")[2],
   );
 
   const monthCostsArr = yearCostsArr.filter(
-    (el) => month === el.date.split("-")[1],
+    (el) => month === el.date.split("-")[0],
   );
 
   const totalCosts = monthCostsArr.reduce(
@@ -92,10 +93,10 @@ async function getMonthInformation(req, res) {
         costObj.total = 0;
       }
       for (let descr in costObj) {
-        const price = costObj[descr]
+        const price = costObj[descr];
 
-        if (descr !== 'total') {
-          costObj.total = costObj.total + price
+        if (descr !== "total") {
+          costObj.total = costObj.total + price;
         }
       }
     }
@@ -106,7 +107,7 @@ async function getMonthInformation(req, res) {
   );
 
   const monthIncomesArr = yearIncomesArr.filter(
-    (el) => month === el.date.split("-")[1],
+    (el) => month === el.date.split("-")[0],
   );
 
   const totalIncomes = monthIncomesArr.reduce(
@@ -142,18 +143,18 @@ async function getMonthInformation(req, res) {
         incomeObj.total = 0;
       }
       for (let descr in incomeObj) {
-        const price = incomeObj[descr]
+        const price = incomeObj[descr];
 
-        if (descr !== 'total') {
-          incomeObj.total = incomeObj.total + price
+        if (descr !== "total") {
+          incomeObj.total = incomeObj.total + price;
         }
       }
     }
   }
-  
+
   res.status(HttpCodes.OK).json({
     costs: costs,
-    incomes: incomes
+    incomes: incomes,
   });
 }
 async function getMonthCosts(req, res, next) {
@@ -213,8 +214,8 @@ async function userIncome(req, res) {
     }
   });
 
-  if(incomes.length > 1) {
-    incomes = incomes.filter(el => el.category === body.category)
+  if (incomes.length > 1) {
+    incomes = incomes.filter((el) => el.category === body.category);
   }
 
   user.operations.incomes = [...incomes];
@@ -235,7 +236,7 @@ async function deleteIncome(req, res) {
   const { body } = req;
   let incomes = [...user.operations.incomes];
 
-  incomes = incomes.filter(el => el.id !== body.id);
+  incomes = incomes.filter((el) => el.id !== body.id);
 
   user.operations.incomes = [...incomes];
 
@@ -244,7 +245,6 @@ async function deleteIncome(req, res) {
   });
 
   return res.send("It's OK").status(200);
-
 }
 
 async function deleteCosts(req, res) {
@@ -252,7 +252,7 @@ async function deleteCosts(req, res) {
   const { body } = req;
   let costs = [...user.operations.costs];
 
-  costs = costs.filter(el => el.id !== body.id);
+  costs = costs.filter((el) => el.id !== body.id);
 
   user.operations.costs = [...costs];
 
@@ -261,7 +261,6 @@ async function deleteCosts(req, res) {
   });
 
   return res.send("It's OK").status(200);
-
 }
 
 async function userCosts(req, res) {
@@ -278,8 +277,8 @@ async function userCosts(req, res) {
     }
   });
 
-  if(costs.length > 1) {
-    costs = costs.filter(el => el.category === body.category)
+  if (costs.length > 1) {
+    costs = costs.filter((el) => el.category === body.category);
   }
 
   user.operations.costs = [...costs];
