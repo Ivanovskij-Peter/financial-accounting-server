@@ -102,15 +102,14 @@ async function getMonthInformation(req, res) {
     }
   }
 
-  const costArr = [];
+  const costsArr = [];
 
   for (let cost in costs) {
     const name = `${cost}`;
     const obj = {};
-    console.log(name);
-    console.log(costs[cost].total);
     costs[cost].total ? (obj[name] = costs[cost].total) : "";
-    costArr.push(obj);
+
+    Object.keys(obj).length > 0 ? costsArr.push(obj) : "";
   }
 
   const yearIncomesArr = user.operations.incomes.filter(
@@ -166,7 +165,7 @@ async function getMonthInformation(req, res) {
   res.status(HttpCodes.OK).json({
     costs: costs,
     incomes: incomes,
-    costArr,
+    costsArr,
   });
 }
 async function getMonthCosts(req, res, next) {
