@@ -6,7 +6,7 @@ const Authrouter = require('./src/auth/auth.router');
 const UserRouter = require('./src/user/user.router');
 const sgMail = require('@sendgrid/mail');
 const cloudinary = require('cloudinary').v2;
-const swaggerDocument = require("swagger.json");
+const swaggerDocument = require('./swagger.json');
 const swaggerUI = require('swagger-ui-express');
 
 dotenv.config();

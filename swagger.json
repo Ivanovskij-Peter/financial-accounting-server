@@ -1,0 +1,427 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    { "url": "http://localhost:8080", "description": "", "variables": {} }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "Kapusta API",
+    "description": "Financial API for you home budget planning",
+    "termsOfService": ""
+  },
+
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authorization"
+    },
+    {
+      "name": "transactions",
+      "description": "financial operations"
+    }
+  ],
+  "paths": {
+    "/user/incomes": {
+      "get": {
+        "tags": ["transactions"],
+        "summary": "get incomes",
+        "operationId": "getincomes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "get incomes",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/200" },
+                "example": {
+                  "user": {
+                    "operations": {
+                      "incomes": [{ "date": "Март", "amount": 15 }]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["transactions"],
+        "summary": "patch incomes",
+        "operationId": "patchincomes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "patch incomes",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/200" },
+                "example": { "categoryTotal": 9 }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "date": "03-15-2021",
+                  "category": "ЗП",
+                  "description": "зарплата",
+                  "amount": "9",
+                  "id": "1"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["transactions"],
+        "summary": "delete incomes",
+        "operationId": "deleteincomes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "delete incomes",
+            "content": { "text/html; charset=utf-8": { "schema": {} } }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "id": "1"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user/costs": {
+      "get": {
+        "tags": ["transactions"],
+        "summary": "get costs",
+        "operationId": "getcosts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "get costs",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/200" },
+                "example": {
+                  "user": {
+                    "operations": {
+                      "costs": [{ "date": "Март", "amount": 30 }]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["transactions"],
+        "summary": "patch costs",
+        "operationId": "patchcosts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "patch costs",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/200" },
+                "example": { "categoryTotal": 30 }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "date": "03-16-2021",
+                  "category": "Продукты",
+                  "description": "Молоко",
+                  "amount": "20",
+                  "id": "2"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["transactions"],
+        "summary": "delete costs",
+        "operationId": "deletecosts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "delete costs",
+            "content": { "text/html; charset=utf-8": { "schema": {} } }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "id": "1"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user/information/{date}": {
+      "get": {
+        "tags": ["transactions"],
+        "summary": "get information",
+        "operationId": "getinformation",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "description": "date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{2}-\\d{2}-\\d{4}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get information",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/200" },
+                "example": {
+                  "costs": {
+                    "total": 30,
+                    "Продукты": { "Макароны": 10, "Молоко": 20, "total": 30 }
+                  },
+                  "incomes": {
+                    "total": 15,
+                    "ЗП": { "зарплата": 15, "total": 15 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "register user",
+        "operationId": "registeruser",
+        "parameters": [],
+        "responses": {
+          "200": { "description": "", "headers": {} },
+          "201": {
+            "description": "register user",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/201" },
+                "example": {
+                  "id": "604fac1d57822d2444d93cc2",
+                  "email": "test22@gmail.com",
+                  "name": "test"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "email": "test22@gmail.com",
+                  "password": "1231231212",
+                  "name": "test"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "login user",
+        "operationId": "loginuser",
+        "parameters": [],
+        "responses": {
+          "200": { "description": "", "headers": {} },
+          "201": {
+            "description": "login user",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/201" },
+                "example": {
+                  "operations": { "incomes": [], "costs": [] },
+                  "balance": 0,
+                  "_id": "604fac1d57822d2444d93cc2",
+                  "email": "test22@gmail.com",
+                  "password": "$2a$14$HhFeriYIc9UqLwx84b/S5uznTFB6j8qdCNGPp6u8NR1bV8mkdgep2",
+                  "name": "test",
+                  "avatarURL": "https://res.cloudinary.com/dfmmznnzy/image/upload/v1615834141/lrgkswyathwbtfacquhb.png",
+                  "verificationToken": "eb177b5a-ca06-49aa-84fe-fc79231b1749",
+                  "__v": 0,
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDRmYWMxZDU3ODIyZDI0NDRkOTNjYzIiLCJpYXQiOjE2MTU4MzQyMzR9.JuOv7l58CwlSfpUPLK_ARGgT4p_e1JtmkaVP_m1R6AI"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "email": "test22@gmail.com",
+                  "password": "1231231212"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "logout user",
+        "operationId": "logoutuser",
+        "parameters": [],
+        "responses": { "200": { "description": "", "headers": {} } },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "200": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "operations": {
+                "type": "object",
+                "properties": {
+                  "incomes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "description": "",
+                          "default": "Март"
+                        },
+                        "amount": {
+                          "type": "integer",
+                          "description": "",
+                          "default": 15
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "201": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "",
+            "default": "604fac1d57822d2444d93cc2"
+          },
+          "email": {
+            "type": "string",
+            "description": "",
+            "default": "test22@gmail.com"
+          },
+          "name": { "type": "string", "description": "", "default": "test" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [],
+  "externalDocs": { "url": "", "description": "" },
+  "warnings": []
+}
