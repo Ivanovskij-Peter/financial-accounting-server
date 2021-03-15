@@ -21,7 +21,7 @@ async function logoutUser(req, res) {
     return res.status(401).send("Not authorized");
   }
 
-  return res.status(204);
+  return res.status(204).send();
 }
 
 async function registerUser(req, res) {
