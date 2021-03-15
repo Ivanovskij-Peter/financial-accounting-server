@@ -9,7 +9,7 @@ const {
   getMonthCosts,
   getMonthInformation,
 } = require("./user.controller");
-const { authorization } = require("../auth/auth.controller");
+const { authorization } = require("../auth/auth.middleware");
 const router = Router();
 
 router.get("/incomes", authorization, asyncWrapper(getMonthIncomes));
