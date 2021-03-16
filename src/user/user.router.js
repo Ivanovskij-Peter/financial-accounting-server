@@ -9,10 +9,11 @@ const {
   getMonthIncomes,
   getMonthCosts,
   getMonthInformation,
+  updateBalance,
 } = require("./user.controller");
 const { authorization } = require("../auth/auth.middleware");
 const router = Router();
-
+router.patch("/balance", authorization, asyncWrapper(updateBalance));
 router.get("/incomes", authorization, asyncWrapper(getMonthIncomes));
 router.get("/costs", authorization, asyncWrapper(getMonthCosts));
 router.get(
