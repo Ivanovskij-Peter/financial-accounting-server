@@ -260,7 +260,9 @@ async function deleteIncome(req, res) {
   const { body } = req;
   let incomes = [...user.operations.incomes];
 
-  incomes = incomes.filter((el) => el.id !== body.id);
+  console.log(req.params.id)
+
+  incomes = incomes.filter((el) => el.id !== req.params.id);
 
   user.operations.incomes = [...incomes];
 
@@ -276,7 +278,7 @@ async function deleteCosts(req, res) {
   const { body } = req;
   let costs = [...user.operations.costs];
 
-  costs = costs.filter((el) => el.id !== body.id);
+  costs = costs.filter((el) => el.id !== req.params.id);
 
   user.operations.costs = [...costs];
 
