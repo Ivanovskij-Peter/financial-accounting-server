@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "servers": [
-    { "url": "https://kapusta-srv.herokuapp.com/", "description": "", "variables": {} },
+    { "url": "https://kapusta-srv.herokuapp.com", "description": "", "variables": {} },
     { "url": "http://localhost:8080", "description": "", "variables": {} }
   ],
   "info": {
