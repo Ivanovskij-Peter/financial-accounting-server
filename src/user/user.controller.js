@@ -260,7 +260,7 @@ async function deleteIncome(req, res) {
   const { body } = req;
   let incomes = [...user.operations.incomes];
 
-  console.log(req.params.id)
+  console.log(req.params.id);
 
   incomes = incomes.filter((el) => el.id !== req.params.id);
 
@@ -334,6 +334,10 @@ async function updateBalance(req, res) {
   }
 }
 
+const getCurrentUser = (req, res) => {
+  res.status(200).send(req.user);
+};
+
 module.exports = {
   deleteIncome,
   deleteCosts,
@@ -343,4 +347,5 @@ module.exports = {
   getMonthIncomes,
   getMonthInformation,
   updateBalance,
+  getCurrentUser,
 };
