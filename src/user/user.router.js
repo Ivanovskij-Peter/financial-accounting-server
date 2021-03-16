@@ -23,7 +23,7 @@ router.get(
 );
 router.patch("/incomes", authorization, asyncWrapper(userIncome));
 router.patch("/costs", authorization, asyncWrapper(userCosts));
-router.delete("/incomes", authorization, asyncWrapper(deleteIncome));
-router.delete("/costs", authorization, asyncWrapper(deleteCosts));
+router.delete("/incomes/:id", authorization, asyncWrapper(deleteIncome));
+router.delete("/costs/:id", authorization, asyncWrapper(deleteCosts));
 
 module.exports = router;
