@@ -2,12 +2,16 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
     unique: true,
     validate: (value) => value.includes("@"),
+  },
+  name: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
@@ -20,22 +24,26 @@ const userSchema = new Schema({
     type: Number,
     default: 0,
   },
-
   operations: {
-    incomes: {
-      date: String,
-      category: String,
-      description: String,
-      amount: String,
-    },
-    costs: {
-      date: String,
-      category: String,
-      description: String,
-      amount: String,
-    },
+    incomes: [
+      {
+        id: String,
+        date: String,
+        category: String,
+        description: String,
+        amount: Number,
+      },
+    ],
+    costs: [
+      {
+        id: String,
+        date: String,
+        category: String,
+        description: String,
+        amount: Number,
+      },
+    ],
   },
 });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);
