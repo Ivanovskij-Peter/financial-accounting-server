@@ -250,7 +250,12 @@
                   "incomes": {
                     "total": 15,
                     "ЗП": { "зарплата": 15, "total": 15 }
-                  }
+                  },
+                  "costsArr": [
+                    { "total": 30, "name": "алкоголь" },
+                    { "total": 150, "name": "продукты" }
+                  ],
+                  "incomesArr": [{ "total": 12000, "name": "зарплата" }]
                 }
               }
             }
@@ -484,6 +489,42 @@
                       "default": ""
                     }
                   }
+                }
+              }
+            }
+          },
+          "incomesArr": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "string",
+                  "description": "",
+                  "default": ""
+                },
+                "name": {
+                  "type": "string",
+                  "description": "",
+                  "default": ""
+                }
+              }
+            }
+          },
+          "costsArr": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "string",
+                  "description": "",
+                  "default": ""
+                },
+                "name": {
+                  "type": "string",
+                  "description": "",
+                  "default": ""
                 }
               }
             }
