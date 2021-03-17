@@ -101,7 +101,7 @@ async function registerUser(req, res) {
     return res.status(500).send({ message: "Something went wrong" });
   }
 
-  const user = await User.create({
+  const createdUser = await User.create({
     ...body,
     avatarURL,
     password: hashedPassword,
