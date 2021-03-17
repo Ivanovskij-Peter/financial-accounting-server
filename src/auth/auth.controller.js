@@ -95,7 +95,7 @@ async function registerUser(req, res) {
 
  
 // TODO: SEND VERIFICATION ROUTE//
-  const tokenToVerify = generateVerificationToken();
+  const tokenToVerify = await generateVerificationToken();
   await sendVerificationEmail(body.email, tokenToVerify);
 
   const createdUser = await User.create({
