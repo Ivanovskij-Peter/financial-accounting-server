@@ -6,6 +6,8 @@ const Authrouter = require('./src/auth/auth.router');
 const UserRouter = require('./src/user/user.router');
 const sgMail = require('@sendgrid/mail');
 const cloudinary = require('cloudinary').v2;
+const swaggerDocument = require('./swagger.json');
+const swaggerUI = require('swagger-ui-express');
 
 dotenv.config();
 
@@ -34,6 +36,7 @@ function connectMiddlewares(app) {
   app.use(express.json());
   app.use(cors());
   app.use('/images', express.static('public/images/'));
+  app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument)); 
 }
 
 function declarateRouters(app) {

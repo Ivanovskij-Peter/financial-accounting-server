@@ -1,4 +1,5 @@
 const { Router } = require("express");
+
 const asyncWrapper = require("../helpers/asyncWrapper");
 const {
   deleteIncome,
@@ -8,10 +9,14 @@ const {
   getMonthIncomes,
   getMonthCosts,
   getMonthInformation,
+  updateBalance,
+  getCurrentUser,
 } = require("./user.controller");
 const { authorization } = require("../auth/auth.middleware");
 const router = Router();
 
+router.get("/", authorization, asyncWrapper(getCurrentUser));
+router.patch("/balance", authorization, asyncWrapper(updateBalance));
 router.get("/incomes", authorization, asyncWrapper(getMonthIncomes));
 router.get("/costs", authorization, asyncWrapper(getMonthCosts));
 router.get(
@@ -21,7 +26,7 @@ router.get(
 );
 router.patch("/incomes", authorization, asyncWrapper(userIncome));
 router.patch("/costs", authorization, asyncWrapper(userCosts));
-router.delete("/incomes", authorization, asyncWrapper(deleteIncome));
-router.delete("/costs", authorization, asyncWrapper(deleteCosts));
+router.delete("/incomes/:id", authorization, asyncWrapper(deleteIncome));
+router.delete("/costs/:id", authorization, asyncWrapper(deleteCosts));
 
 module.exports = router;

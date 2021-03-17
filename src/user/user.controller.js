@@ -22,7 +22,7 @@ async function getMonthIncomes(req, res, next) {
   function getMonthFromString(str) {
     return new Date(str).getMonth();
   }
-  const incomesArr = user.operations.costs;
+  const incomesArr = user.operations.incomes;
   const formatedIncomes = incomesArr
     .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
     .map((item) => ({
@@ -41,7 +41,7 @@ async function getMonthIncomes(req, res, next) {
 
   return res
     .status(200)
-    .send({ user: { operations: { costs: formatedIncomes } } });
+    .send({ user: { operations: { incomes: formatedIncomes } } });
 }
 
 async function getMonthInformation(req, res) {
@@ -260,7 +260,9 @@ async function deleteIncome(req, res) {
   const { body } = req;
   let incomes = [...user.operations.incomes];
 
-  incomes = incomes.filter((el) => el.id !== body.id);
+  console.log(req.params.id);
+
+  incomes = incomes.filter((el) => el.id !== req.params.id);
 
   user.operations.incomes = [...incomes];
 
@@ -276,7 +278,7 @@ async function deleteCosts(req, res) {
   const { body } = req;
   let costs = [...user.operations.costs];
 
-  costs = costs.filter((el) => el.id !== body.id);
+  costs = costs.filter((el) => el.id !== req.params.id);
 
   user.operations.costs = [...costs];
 
@@ -318,6 +320,24 @@ async function userCosts(req, res) {
     .status(201);
 }
 
+async function updateBalance(req, res) {
+  const { balance } = req.body;
+  try {
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { ...req.body, balance: balance },
+      { new: true },
+    );
+    res.status(200).send("Balance updated");
+  } catch (error) {
+    res.status(409).send("Balance is not valid");
+  }
+}
+
+const getCurrentUser = (req, res) => {
+  res.status(200).send(req.user);
+};
+
 module.exports = {
   deleteIncome,
   deleteCosts,
@@ -326,4 +346,6 @@ module.exports = {
   getMonthCosts,
   getMonthIncomes,
   getMonthInformation,
+  updateBalance,
+  getCurrentUser,
 };

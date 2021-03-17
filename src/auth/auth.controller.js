@@ -15,7 +15,9 @@ const User = require("../user/User");
 
 async function logoutUser(req, res) {
   const { _id } = req.user;
+  console.log("_id = " + _id);
   const userById = await User.findByIdAndUpdate(_id, { token: null });
+  console.log("userById = " + userById);
 
   if (!userById) {
     return res.status(401).send("Not authorized");
