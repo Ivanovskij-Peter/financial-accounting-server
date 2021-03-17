@@ -27,7 +27,7 @@ async function logoutUser(req, res) {
 
 const generateVerificationToken = async (uid) => {
   const token = await crypto.randomBytes(16).toString('hex');
-  return await VerificationToken.create({token, uid})
+  return await MailVerification.create({token, uid})
 }
 
 const sendVerificationEmail = async (email, token) => {
@@ -52,11 +52,11 @@ async function registerUser(req, res) {
   const hashedPassword = await bcrypt.hash(body.password, 14);
 
 
-  const user = await User.findOne({
+  const ifExistingUser = await User.findOne({
     email: body.email,
   });
 
-  if (user) {
+  if (ifExistingUser) {
     return res.status(409).send({ message: "Email in use" });
   }
   const avatarTitle = Date.now();
@@ -93,13 +93,10 @@ async function registerUser(req, res) {
   await unlink(`tmp/${avatarTitle}.png`);
   await unlink(ava.destinationPath);
 
+ 
 // TODO: SEND VERIFICATION ROUTE//
   const tokenToVerify = generateVerificationToken();
   await sendVerificationEmail(body.email, tokenToVerify);
-
-    if (!user) {
-    return res.status(500).send({ message: "Something went wrong" });
-  }
 
   const createdUser = await User.create({
     ...body,
@@ -109,9 +106,9 @@ async function registerUser(req, res) {
   });
   
   const data = {
-    id: user.id,
-    email: user.email,
-    name: user.name,
+    id: createdUser.id,
+    email: createdUser.email,
+    name: createdUser.name,
   };
   res.status(201).json(data);
 }

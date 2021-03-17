@@ -7,8 +7,7 @@ const VerificationTokenSchema = new Schema({
         required: true
     },
     uid: {
-        type: ObjectId,
-        required: true
+        type: ObjectId
     },
     createdAt: {
         type: Date,
