@@ -80,7 +80,7 @@ async function registerUser(req, res) {
   if (!user) {
     return res.status(500).send({ message: "Something went wrong" });
   }
-// TODO: SEND VERIFICATION ROUTE//
+  // TODO: SEND VERIFICATION ROUTE//
   await sendVerificationEmail(body.email, tokenToVerify);
   const data = {
     id: user.id,
@@ -95,12 +95,12 @@ async function registerUser(req, res) {
 async function sendVerificationEmail(email, verificationToken) {
   const msg = {
     to: email, // Change to your recipient
-    from: 'team1node@gmail.com', // Change to your verified sender
-    subject: 'Sending with SendGrid is Fun',
+    from: "team1node@gmail.com", // Change to your verified sender
+    subject: "Sending with SendGrid is Fun",
     html: `Thank you for registration. To verify your email, click
     <a href="http://localhost:${process.env.PORT}/auth/verify/${verificationToken}">here</a>`,
   };
-  await sgMail.send(msg).then(res => console.log(res));
+  await sgMail.send(msg).then((res) => console.log(res));
 }
 
 async function loginUser(req, res) {
@@ -110,9 +110,7 @@ async function loginUser(req, res) {
   });
 
   if (!user) {
-    return res
-      .status(HttpCodes.NOT_AUTORIZED)
-      .json({ message: "Not autorized" });
+    return res.status(HttpCodes.NOT_FOUND).json({ message: "User not found" });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
