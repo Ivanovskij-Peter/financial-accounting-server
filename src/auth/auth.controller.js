@@ -92,14 +92,13 @@ async function registerUser(req, res) {
   await unlink(`tmp/${avatarTitle}.png`);
   await unlink(ava.destinationPath);
 
-
-
-  if (!user) {
-    return res.status(500).send({ message: "Something went wrong" });
-  }
 // TODO: SEND VERIFICATION ROUTE//
   const tokenToVerify = generateVerificationToken();
   await sendVerificationEmail(body.email, tokenToVerify);
+
+    if (!user) {
+    return res.status(500).send({ message: "Something went wrong" });
+  }
 
   const user = await User.create({
     ...body,
