@@ -19,7 +19,7 @@ const UserSchema = new Schema({
   },
   avatarURL: String,
   token: String,
-  verificationToken: String,
+  isVerified: Boolean,
   balance: {
     type: Number,
     default: 0,
