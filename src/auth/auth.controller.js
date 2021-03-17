@@ -52,10 +52,11 @@ async function registerUser(req, res) {
   const hashedPassword = await bcrypt.hash(body.password, 14);
 
 
-  const isEmailExist = await User.findOne({
+  const user = await User.findOne({
     email: body.email,
   });
-  if (isEmailExist) {
+
+  if (user) {
     return res.status(409).send({ message: "Email in use" });
   }
   const avatarTitle = Date.now();
