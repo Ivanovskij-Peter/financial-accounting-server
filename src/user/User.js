@@ -22,7 +22,6 @@ const UserSchema = new Schema({
   verificationToken: String,
   balance: {
     type: Number,
-    default: 0,
   },
   operations: {
     incomes: [

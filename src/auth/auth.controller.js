@@ -77,6 +77,7 @@ async function registerUser(req, res) {
     avatarURL,
     password: hashedPassword,
     verificationToken: tokenToVerify,
+    balance: 0,
   });
 
   if (!user) {
@@ -112,14 +113,16 @@ async function loginUser(req, res) {
   });
 
   if (!user) {
-    return res.status(HttpCodes.NOT_FOUND).json({ message: "User not found" });
+    return res
+      .status(HttpCodes.NOT_FOUND)
+      .json({ message: "Authentification is failed" });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res
       .status(HttpCodes.NOT_AUTORIZED)
-      .json({ message: "Not autorized" });
+      .json({ message: "Authentification is failed" });
   }
 
   const token = jwt.sign(
@@ -129,14 +132,16 @@ async function loginUser(req, res) {
     process.env.JWT_SECRET,
   );
 
-  const userNew = await User.findOneAndUpdate(
-    { email },
-    { $set: { token } },
-    {
-      new: true,
+  await User.findOneAndUpdate(user.id, { push: { token: token } });
+  return res.status(HttpCodes.CREATED).json({
+    token,
+    user: {
+      email,
+      name: user.name,
+      avatarURL: user.avatarURL,
+      balance: user.balance,
     },
-  );
-  return res.status(HttpCodes.CREATED).json(userNew);
+  });
 }
 
 module.exports = {

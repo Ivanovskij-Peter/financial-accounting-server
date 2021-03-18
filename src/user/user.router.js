@@ -11,12 +11,20 @@ const {
   getMonthInformation,
   updateBalance,
   getCurrentUser,
+  getOperations,
 } = require("./user.controller");
 const { authorization } = require("../auth/auth.middleware");
+const { validateBalance } = require("../helpers/validate.balance");
+const { validate } = require("../helpers/validate.middleware");
 const router = Router();
 
 router.get("/", authorization, asyncWrapper(getCurrentUser));
-router.patch("/balance", authorization, asyncWrapper(updateBalance));
+router.patch(
+  "/balance",
+  validate(validateBalance),
+  authorization,
+  asyncWrapper(updateBalance),
+);
 router.get("/incomes", authorization, asyncWrapper(getMonthIncomes));
 router.get("/costs", authorization, asyncWrapper(getMonthCosts));
 router.get(
@@ -24,8 +32,9 @@ router.get(
   authorization,
   asyncWrapper(getMonthInformation),
 );
-router.patch("/incomes", authorization, asyncWrapper(userIncome));
-router.patch("/costs", authorization, asyncWrapper(userCosts));
+router.get("/operations", authorization, asyncWrapper(getOperations));
+router.post("/incomes", authorization, asyncWrapper(userIncome));
+router.post("/costs", authorization, asyncWrapper(userCosts));
 router.delete("/incomes/:id", authorization, asyncWrapper(deleteIncome));
 router.delete("/costs/:id", authorization, asyncWrapper(deleteCosts));
 
