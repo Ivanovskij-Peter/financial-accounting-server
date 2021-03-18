@@ -328,7 +328,7 @@ async function updateBalance(req, res) {
       { ...req.body, balance: balance },
       { new: true },
     );
-    res.status(200).send("Balance updated");
+    res.status(200).json(balance);
   } catch (error) {
     res.status(409).send("Balance is not valid");
   }
