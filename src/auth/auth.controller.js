@@ -60,7 +60,7 @@ async function registerUser(req, res) {
     return res.status(409).send({ message: "Email in use" });
   }
   const avatarTitle = Date.now();
-  const avatar = Avatar.builder(
+  Avatar.builder(
     Avatar.Image.margin(Avatar.Image.circleMask(Avatar.Image.identicon())),
     128,
     128,
@@ -93,8 +93,6 @@ async function registerUser(req, res) {
   await unlink(`tmp/${avatarTitle}.png`);
   await unlink(ava.destinationPath);
 
- 
-// TODO: SEND VERIFICATION ROUTE//
   const tokenToVerify = await generateVerificationToken();
   await sendVerificationEmail(body.email, tokenToVerify);
 
@@ -151,7 +149,7 @@ async function loginUser(req, res) {
 
 const verifyEmail = async (req, res) => {
   const { token } = req.params;
-  const tokenRecord = await VerificationToken.findOne({ token })
+  const tokenRecord = await MailVerification.findOne({ token })
   
   if (!tokenRecord) {
       return res.status(404).json({"message": "Verification token invalid"});
@@ -165,7 +163,7 @@ const verifyEmail = async (req, res) => {
   user.isVerified = true;
 
   await user.save()
-  await VerificationToken.findByIdAndDelete(tokenRecord._id);
+  await MailVerification.findByIdAndDelete(tokenRecord._id);
 
   res.send(`<h1> Your email has been verified </h1>
   To continue follow this <a href="${APP_FE_URL}">link</a>
