@@ -249,11 +249,11 @@ async function deleteIncome(req, res) {
   } = req;
   const { user } = req;
   let incomes = [...user.operations.incomes];
-  incomes = incomes.filter((el) => el.id !== id);
-  user.operations.incomes = [...incomes];
+  deletedIncomes = incomes.filter((el) => el.id !== id);
+  user.operations.incomes = deletedIncomes;
   await user.save();
 
-  return res.send("ok").status(200);
+  return res.send("It's OK").status(200);
 }
 
 async function deleteCosts(req, res) {
@@ -262,8 +262,8 @@ async function deleteCosts(req, res) {
   } = req;
   const { user } = req;
   let costs = [...user.operations.costs];
-  costs = costs.filter((el) => el.id !== id);
-  user.operations.costs = [...costs];
+  deletedCosts = costs.filter((el) => el.id !== id);
+  user.operations.costs = deletedCosts;
 
   await user.save();
 
@@ -313,11 +313,8 @@ const getCurrentUser = (req, res) => {
 
 async function getOperations(req, res) {
   const { user } = req;
-  const incomes = [...user.operations.incomes];
-  const costs = [...user.operations.costs];
-  const allOperations = incomes.concat(costs).sort();
   res.status(200).json({
-    allOperations,
+    operations: user.operations,
   });
 }
 
