@@ -40,9 +40,7 @@ async function getMonthIncomes(req, res, next) {
       return acc;
     }, []);
 
-  return res
-    .status(200)
-    .send({ user: { operations: { incomes: formatedIncomes } } });
+  return res.status(200).json({ incomes: formatedIncomes });
 }
 
 async function getMonthInformation(req, res) {
@@ -301,13 +299,11 @@ async function updateBalance(req, res) {
 const getCurrentUser = (req, res) => {
   const { user } = req;
   res.status(200).json({
-    token: user.token,
-    user: {
-      email: user.email,
-      name: user.name,
-      avatarURL: user.avatarURL,
-      balance: user.balance,
-    },
+    // token: user.token,
+    email: user.email,
+    name: user.name,
+    avatarURL: user.avatarURL,
+    balance: user.balance,
   });
 };
 
