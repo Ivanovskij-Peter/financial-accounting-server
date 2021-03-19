@@ -237,7 +237,7 @@ async function userIncome(req, res) {
 
   return res
     .send({
-      incomes,
+      body,
       balance: user.balance,
     })
     .status(201);
@@ -282,7 +282,7 @@ async function userCosts(req, res) {
 
   return res
     .send({
-      costs,
+      body,
       balance: user.balance,
     })
     .status(201);
@@ -290,7 +290,6 @@ async function userCosts(req, res) {
 
 async function updateBalance(req, res) {
   const { balance } = req.body;
-
   await User.findByIdAndUpdate(
     req.user._id,
     { $set: { balance } },
@@ -314,8 +313,24 @@ const getCurrentUser = (req, res) => {
 
 async function getOperations(req, res) {
   const { user } = req;
+  const incomes = [...user.operations.incomes];
+  const costs = [...user.operations.costs];
+  const allOperations = incomes.concat(costs).sort();
   res.status(200).json({
-    operations: user.operations,
+    allOperations,
+  });
+}
+
+async function getIncomes(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    incomes: user.operations.incomes,
+  });
+}
+async function getCosts(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    costs: user.operations.costs,
   });
 }
 
@@ -330,4 +345,6 @@ module.exports = {
   updateBalance,
   getCurrentUser,
   getOperations,
+  getIncomes,
+  getCosts,
 };
