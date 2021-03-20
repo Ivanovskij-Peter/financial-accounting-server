@@ -38,7 +38,7 @@ const generateVerificationToken = async (uid) => {
 const generateAccessToken = async (uid) => {
   return token = jwt.sign(
     {
-      userID: user._id,
+      userID: uid,
     },
     process.env.JWT_SECRET,
     { expiresIn: '60m' }
@@ -47,7 +47,7 @@ const generateAccessToken = async (uid) => {
 const generateRefreshToken = async (uid) => {
   return token = jwt.sign(
     {
-      userID: user._id,
+      userID: uid,
     },
     process.env.JWT_REFRESH_SECRET
   );
