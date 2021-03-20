@@ -12,12 +12,16 @@ const jwt = require("jsonwebtoken");
 
 const { HttpCodes } = require("../helpers/constants");
 const User = require("../user/User");
-const MailVerification = require("./models/MailVerification");
+const VerificationToken = require("./models/MailVerification");
+const RefreshToken = require("./models/RefreshToken")
 
 async function logoutUser(req, res) {
-  const { _id } = req.user;
+  const { _id, refreshToken } = req.user;
   const userById = await User.findByIdAndUpdate(_id, { token: null });
 
+  if (refreshToken) {
+    await RefreshToken.findOneAndDelete({ token: refreshToken });
+  }
   if (!userById) {
     return res.status(401).send("Not authorized");
   }
@@ -27,12 +31,32 @@ async function logoutUser(req, res) {
 
 const generateVerificationToken = async (uid) => {
   const token = await crypto.randomBytes(16).toString('hex');
-  return await MailVerification.create({token, uid})
+  await VerificationToken.create({token, uid})
+  return token;
+}
+
+const generateAccessToken = async (uid) => {
+  return token = jwt.sign(
+    {
+      userID: user._id,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '60m' }
+  );
+}
+const generateRefreshToken = async (uid) => {
+  return token = jwt.sign(
+    {
+      userID: user._id,
+    },
+    process.env.JWT_REFRESH_SECRET
+  );
 }
 
 const sendVerificationEmail = async (email, token) => {
 
-  const API_URL = 'https://kapusta-srv.herokuapp.com/auth/mail-verify'
+  const API_URL = 'https://kapusta-srv.herokuapp.com/auth/mail-verify';
+  const LOCAL_URL = 'http://localhost:8080/auth/mail-verify';
   const msg = {
       to: email,
       from: 'team1node@gmail.com',
@@ -93,16 +117,17 @@ async function registerUser(req, res) {
   await unlink(`tmp/${avatarTitle}.png`);
   await unlink(ava.destinationPath);
 
-  const tokenToVerify = await generateVerificationToken();
-  await sendVerificationEmail(body.email, tokenToVerify);
+  
 
   const createdUser = await User.create({
     ...body,
     avatarURL,
     password: hashedPassword,
-    verificationToken: tokenToVerify,
     balance: 0,
   });
+
+  const tokenToVerify = await generateVerificationToken(createdUser._id);
+  await sendVerificationEmail(body.email, tokenToVerify);
   
   const data = {
     id: createdUser.id,
@@ -131,16 +156,14 @@ async function loginUser(req, res) {
       .json({ message: "Authentification is failed" });
   }
 
-  const token = jwt.sign(
-    {
-      userID: user._id,
-    },
-    process.env.JWT_SECRET,
-  );
+  const token = generateAccessToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
+  await RefreshToken.create({ token: refreshToken });
 
-  await User.findOneAndUpdate(user.id, { push: { token: token } });
+  await User.findOneAndUpdate(user.id);
   return res.status(HttpCodes.CREATED).json({
     token,
+    refreshToken,
     user: {
       email,
       name: user.name,
@@ -152,13 +175,13 @@ async function loginUser(req, res) {
 
 const verifyEmail = async (req, res) => {
   const { token } = req.params;
-  const tokenRecord = await MailVerification.findOne({ token })
-  
+  const tokenRecord = await VerificationToken.findOne({ token })
+
   if (!tokenRecord) {
       return res.status(404).json({"message": "Verification token invalid"});
   }
 
-  const user = await User.findByIdAndUpdate(tokenRecord.uid, )
+  const user = await User.findById(tokenRecord.uid)
   if (!user) {
       return res.status(404).json({"message": "User not found"});
   }
@@ -166,7 +189,7 @@ const verifyEmail = async (req, res) => {
   user.isVerified = true;
 
   await user.save()
-  await MailVerification.findByIdAndDelete(tokenRecord._id);
+  await VerificationToken.findByIdAndDelete(tokenRecord._id);
 
   res.send(`<h1> Your email has been verified </h1>
   To continue follow this <a href="${APP_FE_URL}">link</a>
@@ -175,36 +198,30 @@ const verifyEmail = async (req, res) => {
 
 const refreshToken = async (req, res) => {
   const {
-      token
+      refreshToken
   } = req.body;
 
-  if (!token) {
+  if (!refreshToken) {
       return res.status(401).json({ "message": "Not authorized" })
   }
-  const { id } = await jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
-  if (!id) {
+
+  const { userID } = await jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
+  if (!userID) {
       return res.status(403).json({ "message": "Token is invalid" })
   }
-  const user = await User.findById(id);
-  if (!user) {
-      return res.status(403).json({ "message": "Token is invalid" })
-  }
-  if (!user.refreshTokens.includes(refreshToken)) {
+  const existingRefreshToken = await RefreshToken.findOne({ token: refreshToken });
+  if (!existingRefreshToken) {
       return res.status(403).json({ "message": "Token is invalid" })
   }
   const newAcessToken = this.generateAccessToken({ id });
-  const newRefreshToken = jwt.sign({ id }, process.env.JWT_REFRESH_TOKEN_SECRET);
   
-  user.refreshTokens.push(newRefreshToken);
-  if (user.refreshTokens.length >= 6) user.refreshTokens.pop();
-  
-  await this.updateUser(user._id, user, res);
-  return res.json({ "acessToken": newAcessToken, "refreshToken": newRefreshToken, user: { id: user._id } });
+  return res.json({ "acessToken": newAcessToken });
 }
 
 module.exports = {
   loginUser,
   registerUser,
   logoutUser,
-  verifyEmail
+  verifyEmail,
+  refreshToken,
 };

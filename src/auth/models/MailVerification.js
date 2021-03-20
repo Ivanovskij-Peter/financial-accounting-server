@@ -7,12 +7,13 @@ const VerificationTokenSchema = new Schema({
         required: true
     },
     uid: {
-        type: ObjectId
+        type: ObjectId,
+        required: true
     },
     createdAt: {
         type: Date,
         default: Date.now(),
-        expires: 1000 * 60 * 60 * 24
+        // expires: 1000 * 60 * 60 * 24
     }
 })
 

@@ -247,7 +247,7 @@ async function deleteIncome(req, res) {
   } = req;
   const { user } = req;
   let incomes = [...user.operations.incomes];
-  deletedIncomes = incomes.filter((el) => el.id !== id);
+  const deletedIncomes = incomes.filter((el) => el.id !== id);
   user.operations.incomes = deletedIncomes;
   await user.save();
 
