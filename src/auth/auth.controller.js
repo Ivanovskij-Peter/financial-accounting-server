@@ -1,18 +1,17 @@
 const fs = require('fs');
 const { unlink } = fs.promises;
+const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
+const Avatar = require("avatar-builder");
+const minifyImage = require("imagemin");
+const imageminPngquant = require("imagemin-pngquant");
+const cloudinary = require("cloudinary").v2;
+const sgMail = require("@sendgrid/mail");
+const jwt = require("jsonwebtoken");
+const Joi = require("joi");
 
-const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
-const Avatar = require('avatar-builder');
-const minifyImage = require('imagemin');
-const imageminPngquant = require('imagemin-pngquant');
-const cloudinary = require('cloudinary').v2;
-const sgMail = require('@sendgrid/mail');
-const jwt = require('jsonwebtoken');
-const Joi = require('joi');
-
-const { HttpCodes } = require('../helpers/constants');
-const User = require('../user/User');
+const { HttpCodes } = require("../helpers/constants");
+const User = require("../user/User");
 
 async function logoutUser(req, res) {
   const { _id } = req.user;
@@ -24,7 +23,7 @@ async function logoutUser(req, res) {
       .json({ message: 'Not autorized' });
   }
 
-  return res.status(204);
+  return res.status(204).send();
 }
 
 async function registerUser(req, res) {
@@ -62,15 +61,16 @@ async function registerUser(req, res) {
 
   const [ava] = files;
 
-  let avatarURL = '';
-  // await cloudinary.uploader.upload(ava.destinationPath, function (error, result) {
-  //     avatarURL = result.secure_url;
-  // });
+  let avatarURL = "";
+  await cloudinary.uploader.upload(
+    ava.destinationPath,
+    function (error, result) {
+      avatarURL = result.secure_url;
+    },
+  );
 
-  // await unlink(`tmp/${avatarTitle}.png`);
-  // await unlink(ava.destinationPath);
-
-  // console.log(avatarURL);
+  await unlink(`tmp/${avatarTitle}.png`);
+  await unlink(ava.destinationPath);
 
   const user = await User.create({
     ...body,
@@ -84,13 +84,13 @@ async function registerUser(req, res) {
   }
 
   // await sendVerificationEmail(body.email, tokenToVerify);
-  const registrationResp = {
+  const data = {
     id: user.id,
     email: user.email,
     name: user.name,
   };
   res.status(201).json({
-    registrationResp,
+    ...data,
   });
 }
 
@@ -141,52 +141,8 @@ async function loginUser(req, res) {
   return res.status(HttpCodes.CREATED).json(userNew);
 }
 
-async function validationUser(req, res, next) {
-  const validationRules = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().required(),
-    password: Joi.string().required(),
-  });
-
-  const validationResult = validationRules.validate(req.body);
-
-  if (validationResult.error) {
-    return res
-      .status(HttpCodes.BAD_REQUEST)
-      .json({ message: validationResult.error.details[0].message });
-  }
-  next();
-}
-
-async function authorization(req, res, next) {
-  const header = req.get('Authorization');
-  if (!header) {
-    return res
-      .status(HttpCodes.NOT_AUTORIZED)
-      .json({ message: 'Not autorized' });
-  }
-
-  const token = header.replace('Bearer ', '');
-
-  const payload = jwt.verify(token, process.env.JWT_SECRET);
-  const { userID } = payload;
-  const user = await User.findById(userID);
-
-  if (!user) {
-    return res
-      .status(HttpCodes.NOT_AUTORIZED)
-      .json({ message: 'Not authorized' });
-  }
-
-  req.user = user;
-  req.token = token;
-  next();
-}
-
 module.exports = {
-  validationUser,
   loginUser,
-  authorization,
   registerUser,
   logoutUser,
 };
