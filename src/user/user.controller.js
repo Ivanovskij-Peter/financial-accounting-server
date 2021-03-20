@@ -40,9 +40,7 @@ async function getMonthIncomes(req, res, next) {
       return acc;
     }, []);
 
-  return res
-    .status(200)
-    .send({ user: { operations: { incomes: formatedIncomes } } });
+  return res.status(200).json({ incomes: formatedIncomes });
 }
 
 async function getMonthInformation(req, res) {
@@ -237,7 +235,7 @@ async function userIncome(req, res) {
 
   return res
     .send({
-      incomes,
+      body,
       balance: user.balance,
     })
     .status(201);
@@ -249,11 +247,11 @@ async function deleteIncome(req, res) {
   } = req;
   const { user } = req;
   let incomes = [...user.operations.incomes];
-  incomes = incomes.filter((el) => el.id !== id);
-  user.operations.incomes = [...incomes];
+  deletedIncomes = incomes.filter((el) => el.id !== id);
+  user.operations.incomes = deletedIncomes;
   await user.save();
 
-  return res.send("ok").status(200);
+  return res.send("It's OK").status(200);
 }
 
 async function deleteCosts(req, res) {
@@ -262,8 +260,8 @@ async function deleteCosts(req, res) {
   } = req;
   const { user } = req;
   let costs = [...user.operations.costs];
-  costs = costs.filter((el) => el.id !== id);
-  user.operations.costs = [...costs];
+  deletedCosts = costs.filter((el) => el.id !== id);
+  user.operations.costs = deletedCosts;
 
   await user.save();
 
@@ -282,7 +280,7 @@ async function userCosts(req, res) {
 
   return res
     .send({
-      costs,
+      body,
       balance: user.balance,
     })
     .status(201);
@@ -290,7 +288,6 @@ async function userCosts(req, res) {
 
 async function updateBalance(req, res) {
   const { balance } = req.body;
-
   await User.findByIdAndUpdate(
     req.user._id,
     { $set: { balance } },
@@ -302,13 +299,11 @@ async function updateBalance(req, res) {
 const getCurrentUser = (req, res) => {
   const { user } = req;
   res.status(200).json({
-    token: user.token,
-    user: {
-      email: user.email,
-      name: user.name,
-      avatarURL: user.avatarURL,
-      balance: user.balance,
-    },
+    // token: user.token,
+    email: user.email,
+    name: user.name,
+    avatarURL: user.avatarURL,
+    balance: user.balance,
   });
 };
 
@@ -316,6 +311,19 @@ async function getOperations(req, res) {
   const { user } = req;
   res.status(200).json({
     operations: user.operations,
+  });
+}
+
+async function getIncomes(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    incomes: user.operations.incomes,
+  });
+}
+async function getCosts(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    costs: user.operations.costs,
   });
 }
 
@@ -330,4 +338,6 @@ module.exports = {
   updateBalance,
   getCurrentUser,
   getOperations,
+  getIncomes,
+  getCosts,
 };
