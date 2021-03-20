@@ -1,3 +1,4 @@
+const asyncWrapper = require("../helpers/asyncWrapper");
 const { HttpCodes } = require("../helpers/constants");
 const User = require("./User");
 
@@ -22,7 +23,7 @@ async function getMonthIncomes(req, res, next) {
   function getMonthFromString(str) {
     return new Date(str).getMonth();
   }
-  const incomesArr = user.operations.costs;
+  const incomesArr = user.operations.incomes;
   const formatedIncomes = incomesArr
     .sort((a, b) => getMonthFromString(a.date) - getMonthFromString(b.date))
     .map((item) => ({
@@ -39,24 +40,23 @@ async function getMonthIncomes(req, res, next) {
       return acc;
     }, []);
 
-  return res
-    .status(200)
-    .send({ user: { operations: { costs: formatedIncomes } } });
+  return res.status(200).json({ incomes: formatedIncomes });
 }
 
 async function getMonthInformation(req, res) {
-  const { date } = req.body;
+  // form of date MM-DD-YYYY
+  const { date } = req.params;
   const user = await User.findOne(req.user._id);
 
-  const year = date.split("-")[0];
-  const month = date.split("-")[1];
+  const year = date.split("-")[2];
+  const month = date.split("-")[0];
 
   const yearCostsArr = user.operations.costs.filter(
     (el) => year === el.date.split("-")[2],
   );
 
   const monthCostsArr = yearCostsArr.filter(
-    (el) => month === el.date.split("-")[1],
+    (el) => month === el.date.split("-")[0],
   );
 
   const totalCosts = monthCostsArr.reduce(
@@ -92,13 +92,24 @@ async function getMonthInformation(req, res) {
         costObj.total = 0;
       }
       for (let descr in costObj) {
-        const price = costObj[descr]
+        const price = costObj[descr];
 
-        if (descr !== 'total') {
-          costObj.total = costObj.total + price
+        if (descr !== "total") {
+          costObj.total = costObj.total + price;
         }
       }
     }
+  }
+
+  const costsArr = [];
+
+  for (let cost in costs) {
+    const name = `${cost}`;
+    const obj = {};
+    costs[cost].total ? (obj.total = costs[cost].total) : "";
+    costs[cost].total ? (obj.name = name) : "";
+
+    Object.keys(obj).length > 0 ? costsArr.push(obj) : "";
   }
 
   const yearIncomesArr = user.operations.incomes.filter(
@@ -106,7 +117,7 @@ async function getMonthInformation(req, res) {
   );
 
   const monthIncomesArr = yearIncomesArr.filter(
-    (el) => month === el.date.split("-")[1],
+    (el) => month === el.date.split("-")[0],
   );
 
   const totalIncomes = monthIncomesArr.reduce(
@@ -142,18 +153,31 @@ async function getMonthInformation(req, res) {
         incomeObj.total = 0;
       }
       for (let descr in incomeObj) {
-        const price = incomeObj[descr]
+        const price = incomeObj[descr];
 
-        if (descr !== 'total') {
-          incomeObj.total = incomeObj.total + price
+        if (descr !== "total") {
+          incomeObj.total = incomeObj.total + price;
         }
       }
     }
   }
-  
+
+  const incomesArr = [];
+
+  for (let income in incomes) {
+    const name = `${income}`;
+    const obj = {};
+    incomes[income].total ? (obj.total = incomes[income].total) : "";
+    incomes[income].total ? (obj.name = name) : "";
+
+    Object.keys(obj).length > 0 ? incomesArr.push(obj) : "";
+  }
+
   res.status(HttpCodes.OK).json({
     costs: costs,
-    incomes: incomes
+    incomes: incomes,
+    costsArr,
+    incomesArr,
   });
 }
 async function getMonthCosts(req, res, next) {
@@ -202,97 +226,105 @@ async function getMonthCosts(req, res, next) {
 async function userIncome(req, res) {
   const { user } = req;
   const { body } = req;
-  let incomes = [...user.operations.incomes];
-  let total = 0;
-
-  incomes = [...incomes, body];
-
-  incomes.map((el) => {
-    if (el.category === body.category) {
-      total += +el.amount;
-    }
-  });
-
-  if(incomes.length > 1) {
-    incomes = incomes.filter(el => el.category === body.category)
-  }
+  let incomes = [...user.operations.incomes, body];
 
   user.operations.incomes = [...incomes];
+  user.balance += body.amount; //какое поле приходит с фронтенда
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  await user.save();
 
   return res
     .send({
-      categoryTotal: total,
+      body,
+      balance: user.balance,
     })
     .status(201);
 }
 
 async function deleteIncome(req, res) {
+  const {
+    params: { id },
+  } = req;
   const { user } = req;
-  const { body } = req;
   let incomes = [...user.operations.incomes];
-
-  incomes = incomes.filter(el => el.id !== body.id);
-
-  user.operations.incomes = [...incomes];
-
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  const deletedIncomes = incomes.filter((el) => el.id !== id);
+  user.operations.incomes = deletedIncomes;
+  await user.save();
 
   return res.send("It's OK").status(200);
-
 }
 
 async function deleteCosts(req, res) {
+  const {
+    params: { id },
+  } = req;
   const { user } = req;
-  const { body } = req;
   let costs = [...user.operations.costs];
+  deletedCosts = costs.filter((el) => el.id !== id);
+  user.operations.costs = deletedCosts;
 
-  costs = costs.filter(el => el.id !== body.id);
-
-  user.operations.costs = [...costs];
-
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  await user.save();
 
   return res.send("It's OK").status(200);
-
 }
 
 async function userCosts(req, res) {
   const { user } = req;
   const { body } = req;
-  let costs = [...user.operations.costs];
-  let total = 0;
-
-  costs = [...costs, body];
-
-  costs.map((el) => {
-    if (el.category === body.category) {
-      total += +el.amount;
-    }
-  });
-
-  if(costs.length > 1) {
-    costs = costs.filter(el => el.category === body.category)
-  }
+  let costs = [...user.operations.costs, body];
 
   user.operations.costs = [...costs];
+  user.balance -= body.amount;
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  await user.save();
 
   return res
     .send({
-      categoryTotal: total,
+      body,
+      balance: user.balance,
     })
     .status(201);
+}
+
+async function updateBalance(req, res) {
+  const { balance } = req.body;
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { balance } },
+    { new: true },
+  );
+  res.status(200).send({ balance });
+}
+
+const getCurrentUser = (req, res) => {
+  const { user } = req;
+  res.status(200).json({
+    // token: user.token,
+    email: user.email,
+    name: user.name,
+    avatarURL: user.avatarURL,
+    balance: user.balance,
+  });
+};
+
+async function getOperations(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    operations: user.operations,
+  });
+}
+
+async function getIncomes(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    incomes: user.operations.incomes,
+  });
+}
+async function getCosts(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    costs: user.operations.costs,
+  });
 }
 
 module.exports = {
@@ -303,4 +335,9 @@ module.exports = {
   getMonthCosts,
   getMonthIncomes,
   getMonthInformation,
+  updateBalance,
+  getCurrentUser,
+  getOperations,
+  getIncomes,
+  getCosts,
 };

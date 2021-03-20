@@ -1,3 +1,6 @@
+const { HttpCodes } = require('../helpers/constants');
+const jwt = require('jsonwebtoken');
+const User = require('../user/User');
 const { registerUserSchema, loginUserSchema } = require("./auth.shemes");
 async function validateRegistration(req, res, next) {
   const validationResult = registerUserSchema.validate(req.body);
