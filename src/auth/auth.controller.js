@@ -156,8 +156,8 @@ async function loginUser(req, res) {
       .json({ message: "Authentification is failed" });
   }
 
-  const token = generateAccessToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
+  const token = await generateAccessToken(user.id);
+  const refreshToken = await generateRefreshToken(user.id);
   await RefreshToken.create({ token: refreshToken });
 
   await User.findOneAndUpdate(user.id);
