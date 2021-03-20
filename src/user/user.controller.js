@@ -1,3 +1,4 @@
+const asyncWrapper = require("../helpers/asyncWrapper");
 const { HttpCodes } = require("../helpers/constants");
 const User = require("./User");
 
@@ -227,64 +228,44 @@ async function getMonthCosts(req, res, next) {
 async function userIncome(req, res) {
   const { user } = req;
   const { body } = req;
-  let incomes = [...user.operations.incomes];
-  let total = 0;
-
-  incomes = [...incomes, body];
-
-  incomes.map((el) => {
-    if (el.category === body.category) {
-      total += +el.amount;
-    }
-  });
-
-  if (incomes.length > 1) {
-    incomes = incomes.filter((el) => el.category === body.category);
-  }
+  let incomes = [...user.operations.incomes, body];
 
   user.operations.incomes = [...incomes];
+  user.balance += body.amount; //какое поле приходит с фронтенда
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  await user.save();
 
   return res
     .send({
-      categoryTotal: total,
+      incomes,
+      balance: user.balance,
     })
     .status(201);
 }
 
 async function deleteIncome(req, res) {
+  const {
+    params: { id },
+  } = req;
   const { user } = req;
-  const { body } = req;
   let incomes = [...user.operations.incomes];
-
-  console.log(req.params.id);
-
-  incomes = incomes.filter((el) => el.id !== req.params.id);
-
+  incomes = incomes.filter((el) => el.id !== id);
   user.operations.incomes = [...incomes];
+  await user.save();
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
-
-  return res.send("It's OK").status(200);
+  return res.send("ok").status(200);
 }
 
 async function deleteCosts(req, res) {
+  const {
+    params: { id },
+  } = req;
   const { user } = req;
-  const { body } = req;
   let costs = [...user.operations.costs];
-
-  costs = costs.filter((el) => el.id !== req.params.id);
-
+  costs = costs.filter((el) => el.id !== id);
   user.operations.costs = [...costs];
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  await user.save();
 
   return res.send("It's OK").status(200);
 }
@@ -292,51 +273,51 @@ async function deleteCosts(req, res) {
 async function userCosts(req, res) {
   const { user } = req;
   const { body } = req;
-  let costs = [...user.operations.costs];
-  let total = 0;
-
-  costs = [...costs, body];
-
-  costs.map((el) => {
-    if (el.category === body.category) {
-      total += +el.amount;
-    }
-  });
-
-  if (costs.length > 1) {
-    costs = costs.filter((el) => el.category === body.category);
-  }
+  let costs = [...user.operations.costs, body];
 
   user.operations.costs = [...costs];
+  user.balance -= body.amount;
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, user, {
-    new: true,
-  });
+  await user.save();
 
   return res
     .send({
-      categoryTotal: total,
+      costs,
+      balance: user.balance,
     })
     .status(201);
 }
 
 async function updateBalance(req, res) {
   const { balance } = req.body;
-  try {
-    await User.findByIdAndUpdate(
-      req.user._id,
-      { ...req.body, balance: balance },
-      { new: true },
-    );
-    res.status(200).send("Balance updated");
-  } catch (error) {
-    res.status(409).send("Balance is not valid");
-  }
+
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { balance } },
+    { new: true },
+  );
+  res.status(200).send({ balance });
 }
 
 const getCurrentUser = (req, res) => {
-  res.status(200).send(req.user);
+  const { user } = req;
+  res.status(200).json({
+    token: user.token,
+    user: {
+      email: user.email,
+      name: user.name,
+      avatarURL: user.avatarURL,
+      balance: user.balance,
+    },
+  });
 };
+
+async function getOperations(req, res) {
+  const { user } = req;
+  res.status(200).json({
+    operations: user.operations,
+  });
+}
 
 module.exports = {
   deleteIncome,
@@ -348,4 +329,5 @@ module.exports = {
   getMonthInformation,
   updateBalance,
   getCurrentUser,
+  getOperations,
 };

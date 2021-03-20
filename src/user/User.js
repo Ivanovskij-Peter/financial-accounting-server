@@ -22,7 +22,6 @@ const UserSchema = new Schema({
   isVerified: Boolean,
   balance: {
     type: Number,
-    default: 0,
   },
   operations: {
     incomes: [
