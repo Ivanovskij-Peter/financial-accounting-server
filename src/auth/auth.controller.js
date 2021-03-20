@@ -140,7 +140,7 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({
-    email,
+    email
   });
 
   if (!user) {
@@ -156,11 +156,11 @@ async function loginUser(req, res) {
       .json({ message: "Authentification is failed" });
   }
 
-  const token = await generateAccessToken(user.id);
-  const refreshToken = await generateRefreshToken(user.id);
-  await RefreshToken.create({ token: refreshToken });
+  const token = await generateAccessToken(user._id);
+  const refreshToken = await generateRefreshToken(user._id);
+  const refresh = await RefreshToken.create({ token: refreshToken });
+  console.log("created refresh token: :", refresh);
 
-  await User.findOneAndUpdate(user.id);
   return res.status(HttpCodes.CREATED).json({
     token,
     refreshToken,
