@@ -19,9 +19,19 @@ Content-Type: application/json
 
 ### 
 
-POST http://localhost:3000/auth/refreshToken
+POST http://localhost:8080/auth/refresh-token
 Content-Type: application/json
 
 {
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwM2JiZTQyZGFkNWVjMDJkMDY5YzU5ZiIsImlhdCI6MTYxNDUzNzYwM30.tbb-fx8-rw6Bo6Old5vxm4Njgr-oz7qL9BO1lHfefA8" 
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDU1ZDdhNDQyZTM3ZTIyYmNhYjIzNDYiLCJpYXQiOjE2MTYyODgyMTd9.CvfJR0QYRARF2N5TtlX8Gr1Ac0B3hA4WVRzZGxKOmLo" 
 }
+
+### 
+POST http://localhost:8080/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDU1ZDdhNDQyZTM3ZTIyYmNhYjIzNDYiLCJpYXQiOjE2MTYyODg5MTEsImV4cCI6MTYxNjI5MjUxMX0.k-gjy1eUaWcXnLrnIlAT7UKPeIKmGTKgL_Tk8lEWCN8
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDU1ZDdhNDQyZTM3ZTIyYmNhYjIzNDYiLCJpYXQiOjE2MTYyODg5MTF9.sQfVofxhalSGMk0qUnGo0gRZAvVANL9wT0IgIrlmFFw" 
+}
+
