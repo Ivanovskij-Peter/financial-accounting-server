@@ -4,6 +4,7 @@ const {
   authorization,
   validateRegistration,
   validateLogin,
+  validateRefreshToken
 } = require("./auth.middleware");
 const asyncWrapper = require("../helpers/asyncWrapper");
 const {
@@ -18,6 +19,6 @@ router.post("/register", validateRegistration, asyncWrapper(registerUser));
 router.post("/login", validateLogin, asyncWrapper(loginUser));
 router.post("/logout", authorization, asyncWrapper(logoutUser));
 router.get("/mail-verify/:token", asyncWrapper(verifyEmail));
-router.post("/refresh-token", asyncWrapper(refreshToken));
+router.post("/refresh-token", validateRefreshToken, asyncWrapper(refreshToken));
 
 module.exports = router;

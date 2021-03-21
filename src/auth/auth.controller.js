@@ -16,9 +16,10 @@ const VerificationToken = require("./models/MailVerification");
 const RefreshToken = require("./models/RefreshToken")
 
 async function logoutUser(req, res) {
-  const { _id, refreshToken } = req.user;
-  const userById = await User.findByIdAndUpdate(_id, { token: null });
+  const { _id } = req.user;
+  const { refreshToken } = req.body;
 
+  const userById = await User.findByIdAndUpdate(_id, { token: null });
   if (refreshToken) {
     await RefreshToken.findOneAndDelete({ token: refreshToken });
   }
@@ -159,7 +160,6 @@ async function loginUser(req, res) {
   const token = await generateAccessToken(user._id);
   const refreshToken = await generateRefreshToken(user._id);
   const refresh = await RefreshToken.create({ token: refreshToken });
-  console.log("created refresh token: :", refresh);
 
   return res.status(HttpCodes.CREATED).json({
     token,
@@ -204,18 +204,18 @@ const refreshToken = async (req, res) => {
   if (!refreshToken) {
       return res.status(401).json({ "message": "Not authorized" })
   }
+  try {
+    const { userID } = await jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const existingRefreshToken = await RefreshToken.findOne({ token: refreshToken });
+    if (!existingRefreshToken) {
+        return res.status(403).json({ "message": "Token is invalid" })
+    }
+    const newAcessToken = await generateAccessToken(userID);
+    return res.json({ "token": newAcessToken });
 
-  const { userID } = await jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
-  if (!userID) {
-      return res.status(403).json({ "message": "Token is invalid" })
+  } catch (error) {
+    return res.status(403).json({ "message": "Token is invalid" })
   }
-  const existingRefreshToken = await RefreshToken.findOne({ token: refreshToken });
-  if (!existingRefreshToken) {
-      return res.status(403).json({ "message": "Token is invalid" })
-  }
-  const newAcessToken = this.generateAccessToken({ id });
-  
-  return res.json({ "acessToken": newAcessToken });
 }
 
 module.exports = {
