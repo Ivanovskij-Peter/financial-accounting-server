@@ -12,6 +12,8 @@ const {
   updateBalance,
   getCurrentUser,
   getOperations,
+  getIncomes,
+  getCosts,
 } = require("./user.controller");
 const { authorization } = require("../auth/auth.middleware");
 const { validateBalance } = require("../helpers/validate.balance");
@@ -25,8 +27,11 @@ router.patch(
   authorization,
   asyncWrapper(updateBalance),
 );
-router.get("/incomes", authorization, asyncWrapper(getMonthIncomes));
-router.get("/costs", authorization, asyncWrapper(getMonthCosts));
+router.get("/monthincomes", authorization, asyncWrapper(getMonthIncomes));
+router.get("/monthcosts", authorization, asyncWrapper(getMonthCosts));
+
+router.get("/incomes", authorization, asyncWrapper(getIncomes));
+router.get("/costs", authorization, asyncWrapper(getCosts));
 router.get(
   "/information/:date",
   authorization,

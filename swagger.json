@@ -1,6 +1,7 @@
 {
   "openapi": "3.0.0",
   "servers": [
+    { "url": "https://kapusta-srv.herokuapp.com", "description": "", "variables": {} },
     { "url": "http://localhost:8080", "description": "", "variables": {} }
   ],
   "info": {
@@ -314,22 +315,19 @@
         "operationId": "loginuser",
         "parameters": [],
         "responses": {
-          "200": { "description": "", "headers": {} },
-          "201": {
+          "200": {
             "description": "login user",
             "content": {
               "application/json": {
                 "example": {
-                  "operations": { "incomes": [], "costs": [] },
-                  "balance": 0,
-                  "_id": "604fac1d57822d2444d93cc2",
-                  "email": "test22@gmail.com",
-                  "password": "$2a$14$HhFeriYIc9UqLwx84b/S5uznTFB6j8qdCNGPp6u8NR1bV8mkdgep2",
-                  "name": "test",
-                  "avatarURL": "https://res.cloudinary.com/dfmmznnzy/image/upload/v1615834141/lrgkswyathwbtfacquhb.png",
-                  "verificationToken": "eb177b5a-ca06-49aa-84fe-fc79231b1749",
-                  "__v": 0,
-                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDRmYWMxZDU3ODIyZDI0NDRkOTNjYzIiLCJpYXQiOjE2MTU4MzQyMzR9.JuOv7l58CwlSfpUPLK_ARGgT4p_e1JtmkaVP_m1R6AI"
+                  "token": "Access token",
+                  "refreshToken": "Refresh token",
+                  "user": {
+                    "email": "shabliioleg@gmail.com",
+                    "name": "Xoms",
+                    "avatarURL": "https://res.cloudinary.com/dfmmznnzy/image/upload/v1616238499/peife2ztl9lhtqtdpsdi.png",
+                    "balance": 0
+                  }
                 }
               }
             }
@@ -342,8 +340,8 @@
               "schema": {
                 "type": "string",
                 "example": {
-                  "email": "test22@gmail.com",
-                  "password": "1231231212"
+                  "email": "shabliioleg@gmail.com",
+                  "password": "password"
                 }
               }
             }
@@ -362,7 +360,64 @@
           {
             "BearerAuth": []
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDU1ZDdhNDQyZTM3ZTIyYmNhYjIzNDYiLCJpYXQiOjE2MTYyODM2ODV9.Oc1LjpsYXCb4D_I7Fn4l5svJs8LwotdytKqXSrvlcT8"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "auth/mail-verify/:token": {
+      "get": {
+        "tags": ["auth"],
+        "summary": "Email verification endpoint, accept Verification Token as a parameter",
+        "parameters": [{
+          "name": "token",
+          "in": "path",
+          "description": "Email verification token",
+          "required": true
+           }],
+        "responses": { "200": { "description": "Return html markup with link to FE and set isVerified to 'true' in current User entity"} }
+      }
+    },
+    "auth/refresh-token": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Returns new accessToken",
+        "responses": {
+          "200": {
+            "description": "New access token",
+            "content": {
+              "application/json": {
+                "example": {
+                  "token": "Access token"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MDU1ZDdhNDQyZTM3ZTIyYmNhYjIzNDYiLCJpYXQiOjE2MTYyODM2ODV9.Oc1LjpsYXCb4D_I7Fn4l5svJs8LwotdytKqXSrvlcT8"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

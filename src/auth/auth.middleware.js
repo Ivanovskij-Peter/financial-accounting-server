@@ -1,11 +1,21 @@
 const { HttpCodes } = require('../helpers/constants');
 const jwt = require('jsonwebtoken');
 const User = require('../user/User');
-const { registerUserSchema, loginUserSchema } = require("./auth.shemes");
+const { registerUserSchema, loginUserSchema, logoutUserSchema } = require("./auth.shemes");
 async function validateRegistration(req, res, next) {
   const validationResult = registerUserSchema.validate(req.body);
 
   if (validationResult.error) {
+    return res
+      .status(HttpCodes.BAD_REQUEST)
+      .json({ message: validationResult.error.details[0].message });
+  }
+  next();
+}
+
+async function validateRefreshToken(req, res, next) {
+  const validationResult = logoutUserSchema.validate(req.body);
+    if (validationResult.error) {
     return res
       .status(HttpCodes.BAD_REQUEST)
       .json({ message: validationResult.error.details[0].message });
@@ -51,4 +61,5 @@ module.exports = {
   authorization,
   validateRegistration,
   validateLogin,
+  validateRefreshToken,
 };

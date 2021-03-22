@@ -1,3 +1,4 @@
+const { string } = require("joi");
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
@@ -19,7 +20,11 @@ const UserSchema = new Schema({
   },
   avatarURL: String,
   token: String,
-  verificationToken: String,
+  refreshToken: String,
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
   balance: {
     type: Number,
   },

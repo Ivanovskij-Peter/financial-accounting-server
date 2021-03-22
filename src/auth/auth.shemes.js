@@ -12,7 +12,12 @@ const loginUserSchema = Joi.object({
   password: Joi.string().min(8).required().max(16),
 });
 
+const logoutUserSchema = Joi.object({
+  refreshToken: Joi.string().required()
+})
+
 module.exports = {
   registerUserSchema,
   loginUserSchema,
+  logoutUserSchema
 };
