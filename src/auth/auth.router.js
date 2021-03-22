@@ -4,7 +4,7 @@ const {
   authorization,
   validateRegistration,
   validateLogin,
-  validateRefreshToken
+  validateRefreshToken,
 } = require("./auth.middleware");
 const asyncWrapper = require("../helpers/asyncWrapper");
 const {
@@ -12,11 +12,13 @@ const {
   registerUser,
   logoutUser,
   verifyEmail,
-  refreshToken
+  refreshToken,
+  loginWithGoogle,
 } = require("./auth.controller");
 
 router.post("/register", validateRegistration, asyncWrapper(registerUser));
 router.post("/login", validateLogin, asyncWrapper(loginUser));
+router.post("/login-with-google", asyncWrapper(loginWithGoogle));
 router.post("/logout", authorization, asyncWrapper(logoutUser));
 router.get("/mail-verify/:token", asyncWrapper(verifyEmail));
 router.post("/refresh-token", validateRefreshToken, asyncWrapper(refreshToken));
