@@ -63,10 +63,7 @@ async function getMonthInformation(req, res) {
     (acc, el) => acc + Number(el.amount),
     0,
   );
-  console.log("user.operations.costs", user.operations.costs);
-  console.log("month", month);
-  console.log("monthCostsArr", monthCostsArr);
-  // console.log("user", user);
+
   const costs = {
     total: totalCosts,
   };
