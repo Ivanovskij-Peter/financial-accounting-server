@@ -117,7 +117,7 @@ async function getMonthInformation(req, res) {
   );
 
   const monthIncomesArr = yearIncomesArr.filter(
-    (el) => month === el.date.split(".")[0],
+    (el) => month === el.date.split(".")[1],
   );
 
   const totalIncomes = monthIncomesArr.reduce(
