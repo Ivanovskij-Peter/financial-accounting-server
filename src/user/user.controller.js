@@ -49,15 +49,17 @@ async function getMonthInformation(req, res) {
   const user = await User.findOne(req.user._id);
 
   const year = date.split("-")[2];
-  const month = date.split("-")[0];
+  const month = date.split("-")[1];
 
   const yearCostsArr = user.operations.costs.filter(
-    (el) => year === el.date.split("-")[2],
+    (el) => year === el.date.split(".")[2],
   );
 
   const monthCostsArr = yearCostsArr.filter(
-    (el) => month === el.date.split("-")[0],
+    (el) => month === el.date.split(".")[0],
   );
+  console.log(monthCostsArr);
+  console.log(user.operations.costs);
 
   const totalCosts = monthCostsArr.reduce(
     (acc, el) => acc + Number(el.amount),
@@ -113,11 +115,11 @@ async function getMonthInformation(req, res) {
   }
 
   const yearIncomesArr = user.operations.incomes.filter(
-    (el) => year === el.date.split("-")[2],
+    (el) => year === el.date.split(".")[2],
   );
 
   const monthIncomesArr = yearIncomesArr.filter(
-    (el) => month === el.date.split("-")[0],
+    (el) => month === el.date.split(".")[0],
   );
 
   const totalIncomes = monthIncomesArr.reduce(
