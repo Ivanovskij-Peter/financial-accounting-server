@@ -21,9 +21,9 @@ const UserSchema = new Schema({
   avatarURL: String,
   token: String,
   refreshToken: String,
-  isVerified: {
+  isNotVerified: {
     type: Boolean,
-    default: false
+    default: true
   },
   balance: {
     type: Number,
