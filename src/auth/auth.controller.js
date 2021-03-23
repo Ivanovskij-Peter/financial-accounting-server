@@ -168,7 +168,7 @@ async function loginUser(req, res) {
       name: user.name,
       avatarURL: user.avatarURL,
       balance: user.balance,
-      isVerified: user.isVerified
+      isNotVerified: user.isNotVerified
     },
   });
 }
@@ -190,7 +190,7 @@ const loginWithGoogle = async (req, res) => {
       const createdUser = await User.create({
         email,
         name,
-        isVerified: true,
+        isNotVerified: false,
         password: "auth from google",
         avatarURL: picture,
         balance: 0,
@@ -246,7 +246,7 @@ const verifyEmail = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
   const APP_FE_URL = "http://localhost:3000";
-  user.isVerified = true;
+  user.isNotVerified = false;
 
   await user.save();
   await VerificationToken.findByIdAndDelete(tokenRecord._id);
