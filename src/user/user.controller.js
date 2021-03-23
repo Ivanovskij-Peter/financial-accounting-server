@@ -218,9 +218,7 @@ async function getMonthCosts(req, res, next) {
       return acc;
     }, []);
 
-  return res
-    .status(200)
-    .send({ user: { operations: { costs: formatedCost } } });
+  return res.status(200).json({ costs: formatedCost });
 }
 
 async function userIncome(req, res) {
