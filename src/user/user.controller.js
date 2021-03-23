@@ -245,7 +245,7 @@ async function deleteIncome(req, res) {
   } = req;
   const { user } = req;
   let incomes = [...user.operations.incomes];
-  let income = incomes.find((item) => item._id.toString() == id);
+  let income = incomes.find((item) => item._id.toString() === id);
   const deletedIncomes = incomes.filter((el) => el._id.toString() !== id);
   user.operations.incomes = deletedIncomes;
   user.balance -= income.amount;
@@ -261,7 +261,7 @@ async function deleteCosts(req, res) {
   } = req;
   const { user } = req;
   let costs = [...user.operations.costs];
-  let cost = costs.find((item) => item._id.toString() == id);
+  let cost = costs.find((item) => item._id.toString() === id);
   deletedCosts = costs.filter((el) => el._id.toString() !== id);
   user.operations.costs = deletedCosts;
   user.balance += cost.amount;
