@@ -220,9 +220,7 @@ async function getMonthCosts(req, res, next) {
       return acc;
     }, []);
 
-  return res
-    .status(200)
-    .send({ user: { operations: { costs: formatedCost } } });
+  return res.status(200).json({ costs: formatedCost });
 }
 
 async function userIncome(req, res) {
@@ -249,11 +247,14 @@ async function deleteIncome(req, res) {
   } = req;
   const { user } = req;
   let incomes = [...user.operations.incomes];
+  let income = incomes.find((item) => item._id.toString() === id);
   const deletedIncomes = incomes.filter((el) => el._id.toString() !== id);
   user.operations.incomes = deletedIncomes;
+  user.balance -= income.amount;
+
   await user.save();
 
-  return res.send("It's OK").status(200);
+  return res.send({ balance: user.balance }).status(200);
 }
 
 async function deleteCosts(req, res) {
@@ -262,12 +263,14 @@ async function deleteCosts(req, res) {
   } = req;
   const { user } = req;
   let costs = [...user.operations.costs];
+  let cost = costs.find((item) => item._id.toString() === id);
   deletedCosts = costs.filter((el) => el._id.toString() !== id);
   user.operations.costs = deletedCosts;
+  user.balance += cost.amount;
 
   await user.save();
 
-  return res.send("It's OK").status(200);
+  return res.send({ balance: user.balance }).status(200);
 }
 
 async function userCosts(req, res) {
