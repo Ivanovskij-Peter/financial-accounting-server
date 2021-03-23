@@ -168,6 +168,7 @@ async function loginUser(req, res) {
       name: user.name,
       avatarURL: user.avatarURL,
       balance: user.balance,
+      isVerified: user.isVerified
     },
   });
 }
