@@ -45,7 +45,7 @@ const generateAccessToken = async (uid) => {
       userID: uid,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "60m" },
+    { expiresIn: "240m" },
   ));
 };
 const generateRefreshToken = async (uid) => {
@@ -168,7 +168,7 @@ async function loginUser(req, res) {
       name: user.name,
       avatarURL: user.avatarURL,
       balance: user.balance,
-      isNotVerified: user.isNotVerified
+      isNotVerified: user.isNotVerified,
     },
   });
 }
